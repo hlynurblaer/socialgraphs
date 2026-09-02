@@ -1,0 +1,173 @@
+{
+  "n_nodes": 303,
+  "n_edges": 1784,
+  "isolates": [
+    "Baymax",
+    "Bird-Brain (Marvel Comics)",
+    "Black Fox (Robert Paine)",
+    "Brain Drain (character)",
+    "Breeze Barton",
+    "Captain Midlands",
+    "Charcoal (comics)",
+    "Father Time (Marvel Comics)",
+    "Happy Sam Sawyer",
+    "Hellfire (J. T. Slade)",
+    "Illuminator (Marvel Comics)",
+    "Miracleman (character)",
+    "Ogre (Marvel Comics)",
+    "Sean and Chris",
+    "Solarman",
+    "Super Rabbit",
+    "Yo-Yo Rodriguez"
+  ],
+  "n_isolates": 17,
+  "small_components": [
+    [
+      "Vyking",
+      "Radian (Morituri)",
+      "Scaredycat",
+      "Toxyn",
+      "Blackthorn (character)",
+      "Backhand (character)",
+      "Scatterbrain (Morituri)",
+      "Shear (character)",
+      "Snapdragon (Morituri)"
+    ]
+  ],
+  "giant_component_size": 277,
+  "top_in_degree": [
+    [
+      "Spider-Man",
+      106
+    ],
+    [
+      "Hulk",
+      64
+    ],
+    [
+      "Wolverine (character)",
+      60
+    ],
+    [
+      "Doctor Strange",
+      50
+    ],
+    [
+      "Deadpool",
+      33
+    ],
+    [
+      "She-Hulk",
+      29
+    ],
+    [
+      "Scarlet Witch",
+      28
+    ],
+    [
+      "Black Panther (character)",
+      27
+    ],
+    [
+      "Cyclops (Marvel Comics)",
+      26
+    ],
+    [
+      "Luke Cage",
+      25
+    ]
+  ],
+  "top_out_degree": [
+    [
+      "Betsy Braddock",
+      28
+    ],
+    [
+      "Cloak and Dagger (characters)",
+      24
+    ],
+    [
+      "Adam Warlock",
+      22
+    ],
+    [
+      "Venom (character)",
+      21
+    ],
+    [
+      "She-Hulk",
+      20
+    ],
+    [
+      "U.S. Agent",
+      20
+    ],
+    [
+      "Deadpool",
+      19
+    ],
+    [
+      "Rachel Summers",
+      19
+    ],
+    [
+      "Noh-Varr",
+      18
+    ],
+    [
+      "Doctor Strange",
+      17
+    ]
+  ],
+  "top_pagerank": [
+    [
+      "Spider-Man",
+      0.0501
+    ],
+    [
+      "Hulk",
+      0.028
+    ],
+    [
+      "Wolverine (character)",
+      0.0259
+    ],
+    [
+      "Doctor Strange",
+      0.0207
+    ],
+    [
+      "Black Cat (Marvel Comics)",
+      0.0176
+    ],
+    [
+      "Deadpool",
+      0.0148
+    ],
+    [
+      "Mayday Parker",
+      0.0143
+    ],
+    [
+      "Venom (character)",
+      0.0137
+    ],
+    [
+      "Phoenix (Guardians of the Galaxy)",
+      0.0136
+    ],
+    [
+      "Jean Grey",
+      0.013
+    ]
+  ],
+  "reciprocity": 0.3924,
+  "mutual_pairs_count": 350,
+  "density": 0.0195,
+  "avg_clustering": 0.3075,
+  "avg_path_length_giant": 2.674,
+  "zero_in_degree_count": 58,
+  "zero_out_degree_count": 20,
+  "max_in_degree": 106,
+  "max_out_degree": 28
+}
