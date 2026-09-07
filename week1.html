@@ -404,6 +404,7 @@
   .case-files {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    align-items: start;
     gap: 1.4rem;
     margin-bottom: 1rem;
   }
@@ -424,6 +425,46 @@
     color: #555;
     margin-top: 0.5rem;
   }
+
+  /* ---------- exhibits ---------- */
+
+  .exhibit {
+    position: relative;
+    background: var(--paper-white);
+    border: 3px solid var(--ink);
+    box-shadow: 5px 5px 0 var(--ink);
+    padding: 1.1rem 1.3rem 1rem;
+    margin: 0 0 1.8rem;
+    max-width: 640px;
+  }
+
+  .exhibit-a { transform: rotate(-0.7deg); }
+  .exhibit-b { transform: rotate(0.6deg); }
+
+  .exhibit::before {
+    content: "";
+    position: absolute;
+    top: -11px;
+    left: 28px;
+    width: 16px;
+    height: 16px;
+    background: var(--marvel-red);
+    border-radius: 50%;
+    border: 2px solid var(--ink);
+  }
+
+  .exhibit-tag {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--red-dark);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .exhibit p.lead-line { margin: 0; }
 
   @media (max-width: 720px) {
     .graph-shell { flex-direction: column; }
@@ -551,24 +592,30 @@
     </figure>
   </div>
 
-  <p class="lead-line">
-    Split degree by direction and the story sharpens. In-degree is roughly how famous a character
-    is &mdash; how many other articles bother to cite them. Out-degree is closer to how much backstory
-    their own article drags along. Those turn out to be almost entirely different rankings: Spider-Man,
-    Hulk and Doctor Strange dominate in-degree, but the heaviest linkers <em>out</em> are characters like
-    Betsy Braddock and Cloak and Dagger, whose retcon-heavy histories namecheck a lot of other characters
-    without being famous enough themselves to get cited back at the same rate.
-  </p>
+  <div class="exhibit exhibit-a">
+    <span class="exhibit-tag">Exhibit A &middot; Degree, By Direction</span>
+    <p class="lead-line">
+      Split degree by direction and the story sharpens. In-degree is roughly how famous a character
+      is &mdash; how many other articles bother to cite them. Out-degree is closer to how much backstory
+      their own article drags along. Those turn out to be almost entirely different rankings: Spider-Man,
+      Hulk and Doctor Strange dominate in-degree, but the heaviest linkers <em>out</em> are characters like
+      Betsy Braddock and Cloak and Dagger, whose retcon-heavy histories namecheck a lot of other characters
+      without being famous enough themselves to get cited back at the same rate.
+    </p>
+  </div>
 
-  <p class="lead-line">
-    The real surprise wasn't the hub, though &mdash; it's the gold cluster in the network above: nine
-    <em>Strikeforce: Morituri</em> characters (cast of a self-contained 1980s spinoff about humans handed
-    superpowers that kill them within a year) who only ever link each other, exiled from the wider Marvel
-    wiki exactly like the series was exiled from mainstream continuity. The 17 gray isolates tell a
-    similar story from a different angle &mdash; golden-age holdovers, licensed crossovers, and
-    rights-tangled characters, all sitting just outside a graph that otherwise runs on cross-references.
-    Toggle <b>The Outsiders</b> above and go meet them yourself.
-  </p>
+  <div class="exhibit exhibit-b">
+    <span class="exhibit-tag">Exhibit B &middot; The Outsiders, Explained</span>
+    <p class="lead-line">
+      The real surprise wasn't the hub, though &mdash; it's the gold cluster in the network above: nine
+      <em>Strikeforce: Morituri</em> characters (cast of a self-contained 1980s spinoff about humans handed
+      superpowers that kill them within a year) who only ever link each other, exiled from the wider Marvel
+      wiki exactly like the series was exiled from mainstream continuity. The 17 gray isolates tell a
+      similar story from a different angle &mdash; golden-age holdovers, licensed crossovers, and
+      rights-tangled characters, all sitting just outside a graph that otherwise runs on cross-references.
+      Toggle <b>The Outsiders</b> above and go meet them yourself.
+    </p>
+  </div>
 
   <p class="signoff">
     Built with pandas, networkx &amp; d3 &middot; frozen snapshot 2026-08-26
