@@ -403,7 +403,7 @@
 
   .case-files {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 1.4rem;
     margin-bottom: 1rem;
   }
@@ -414,6 +414,8 @@
     border: 3px solid var(--ink);
     box-shadow: 6px 6px 0 var(--ink);
     padding: 0.7rem;
+    display: flex;
+    flex-direction: column;
   }
 
   .case-files img { display: block; width: 100%; height: auto; border-radius: 2px; }
@@ -424,6 +426,20 @@
     color: #555;
     margin-top: 0.5rem;
   }
+
+  .field-notes {
+    list-style: none;
+    margin: auto 0 0;
+    padding: 0.65rem 0 0;
+    border-top: 1px dashed #cbbf9a;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: #444;
+    display: grid;
+    gap: 0.32rem;
+  }
+
+  .field-notes b { color: var(--red-dark); }
 
   /* ---------- exhibits ---------- */
 
@@ -583,6 +599,12 @@
     <figure>
       <img src="assets/img/degree_distribution.png" alt="Degree distribution on linear vs log-log axes">
       <figcaption>Linear axes hide the tail. Log-log doesn't. Most heroes are barely linked &mdash; a few carry the whole graph.</figcaption>
+      <ul class="field-notes">
+        <li>Median total degree: <b>7</b></li>
+        <li>Most common degree: <b>5</b> &mdash; 39% of the cast sits at 5 or below</li>
+        <li>Max total degree: <b>115</b> &mdash; Spider-Man, obviously</li>
+        <li>Characters above degree 40: <b>8</b> out of 303</li>
+      </ul>
     </figure>
     <figure>
       <img src="assets/img/in_vs_out_degree.png" alt="In-degree vs out-degree scatter plot">
