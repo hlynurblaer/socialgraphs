@@ -237,7 +237,7 @@
     position: relative;
   }
 
-  #graph { display: block; width: 100%; height: auto; cursor: grab; }
+  #graph { display: block; width: 100%; height: auto; cursor: grab; touch-action: none; }
   #graph:active { cursor: grabbing; }
 
   .hint {
@@ -494,7 +494,7 @@
 
   <div class="graph-shell">
     <div id="graph-wrap">
-      <svg id="graph"></svg>
+      <canvas id="graph"></canvas>
       <div class="hint">scroll to zoom &middot; drag to fight &middot; click empty space to reset</div>
     </div>
     <div id="dossier">
@@ -569,7 +569,6 @@
   const W = data.width, H = data.height;
 
   const colorOf = { giant: '#ed1d24', morituri: '#f1c40f', isolate: '#7f8c9a' };
-  const nodesById = new Map(data.nodes.map(d => [d.id, d]));
 
   // build adjacency before d3-force mutates link.source/target into node refs
   const neighbors = new Map(data.nodes.map(d => [d.id, { in: new Set(), out: new Set() }]));
@@ -585,28 +584,24 @@
     heroList.appendChild(opt);
   });
 
-  const svg = d3.select('#graph').attr('viewBox', [0, 0, W, H]);
-  const g = svg.append('g');
+  // ---------- canvas setup ----------
+  // Rendering ~2,000 SVG elements' attributes every simulation tick is what made this
+  // laggy. A canvas redraw of the same scene is orders of magnitude cheaper, since it's
+  // one set of draw calls per frame instead of thousands of individual DOM writes.
+  const canvas = document.getElementById('graph');
+  const ctx = canvas.getContext('2d');
+  const DPR = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = Math.round(W * DPR);
+  canvas.height = Math.round(H * DPR);
 
-  const zoom = d3.zoom().scaleExtent([0.25, 8]).on('zoom', (event) => {
-    g.attr('transform', event.transform);
-  });
-  svg.call(zoom);
+  let fit = 1; // world-units -> displayed CSS px, kept in sync with the responsive canvas size
+  function updateFit() {
+    fit = canvas.getBoundingClientRect().width / W;
+  }
 
   const radius = d3.scaleSqrt().domain([0, d3.max(data.nodes, d => d.in) || 1]).range([4, 28]);
 
-  const link = g.append('g').attr('stroke', '#00000022').attr('stroke-width', 1)
-    .selectAll('line').data(data.links).join('line');
-
-  const node = g.append('g')
-    .selectAll('circle').data(data.nodes).join('circle')
-    .attr('r', d => radius(d.in))
-    .attr('fill', d => colorOf[d.group])
-    .attr('stroke', '#111').attr('stroke-width', 1.4)
-    .attr('cx', d => d.x0).attr('cy', d => d.y0)
-    .style('cursor', 'pointer');
-
-  node.append('title').text(d => d.name);
+  data.nodes.forEach(d => { d.x = d.x0; d.y = d.y0; });
 
   const simulation = d3.forceSimulation(data.nodes)
     .force('link', d3.forceLink(data.links).id(d => d.id).distance(26).strength(0.2))
@@ -614,56 +609,132 @@
     .force('collide', d3.forceCollide(d => radius(d.in) + 2))
     .force('x', d3.forceX(d => d.x0).strength(0.09))
     .force('y', d3.forceY(d => d.y0).strength(0.09))
-    .alphaDecay(0.025)
-    .on('tick', ticked);
+    .alphaDecay(0.035)
+    .on('tick', requestRender);
 
-  function ticked() {
-    link.attr('x1', d => d.source.x).attr('y1', d => d.source.y)
-        .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
-    node.attr('cx', d => d.x).attr('cy', d => d.y);
+  let currentTransform = d3.zoomIdentity;
+  let hoveredNode = null;
+  let selectedNode = null;
+  let filterMode = 'everyone';
+
+  function pointerToWorld(event) {
+    const [px, py] = d3.pointer(event, canvas);
+    return [(px - currentTransform.x) / (currentTransform.k * fit), (py - currentTransform.y) / (currentTransform.k * fit)];
   }
 
-  function dragstarted(event, d) {
-    if (!event.active) simulation.alphaTarget(0.25).restart();
-    d.fx = d.x; d.fy = d.y;
-  }
-  function dragged(event, d) { d.fx = event.x; d.fy = event.y; }
-  function dragended(event, d) {
-    if (!event.active) simulation.alphaTarget(0);
-    d.fx = null; d.fy = null;
-  }
-  node.call(d3.drag().on('start', dragstarted).on('drag', dragged).on('end', dragended));
-
-  function highlight(d) {
-    const nb = neighbors.get(d.id);
-    node.attr('opacity', o => o.id === d.id || nb.in.has(o.id) || nb.out.has(o.id) ? 1 : 0.1);
-    link
-      .attr('stroke', l => {
-        const s = l.source.id ?? l.source, t = l.target.id ?? l.target;
-        if (s === d.id) return '#e67e22';
-        if (t === d.id) return '#2980b9';
-        return '#00000015';
-      })
-      .attr('stroke-width', l => {
-        const s = l.source.id ?? l.source, t = l.target.id ?? l.target;
-        return (s === d.id || t === d.id) ? 2 : 1;
-      })
-      .attr('opacity', l => {
-        const s = l.source.id ?? l.source, t = l.target.id ?? l.target;
-        return (s === d.id || t === d.id) ? 0.95 : 0.05;
-      });
+  function findNodeAt(wx, wy) {
+    let best = null, bestDist = Infinity;
+    for (const n of data.nodes) {
+      if (filterMode === 'outsiders' && n.group === 'giant') continue;
+      const dx = n.x - wx, dy = n.y - wy;
+      const dist = dx * dx + dy * dy;
+      const r = radius(n.in) + 3;
+      if (dist < r * r && dist < bestDist) { best = n; bestDist = dist; }
+    }
+    return best;
   }
 
-  function clearHighlight() {
-    node.attr('opacity', 1);
-    link.attr('stroke', '#00000022').attr('stroke-width', 1).attr('opacity', 1);
+  // ---------- render ----------
+  let renderQueued = false;
+  function requestRender() {
+    if (renderQueued) return;
+    renderQueued = true;
+    requestAnimationFrame(() => { renderQueued = false; render(); });
   }
 
-  node.on('mouseenter', (event, d) => highlight(d))
-      .on('mouseleave', clearHighlight)
-      .on('click', (event, d) => { event.stopPropagation(); showDossier(d); highlight(d); });
+  function render() {
+    const t = currentTransform;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    ctx.translate(t.x / fit, t.y / fit);
+    ctx.scale(t.k, t.k);
 
-  svg.on('click', () => { clearHighlight(); showDossier(null); });
+    const active = hoveredNode || selectedNode;
+    const nb = active ? neighbors.get(active.id) : null;
+    const outsidersOnly = filterMode === 'outsiders';
+
+    for (const l of data.links) {
+      const s = l.source, tg = l.target;
+      if (outsidersOnly && s.group === 'giant') continue;
+      if (active) {
+        if (s.id === active.id) { ctx.strokeStyle = '#e67e22'; ctx.globalAlpha = 0.95; ctx.lineWidth = 2; }
+        else if (tg.id === active.id) { ctx.strokeStyle = '#2980b9'; ctx.globalAlpha = 0.95; ctx.lineWidth = 2; }
+        else { ctx.strokeStyle = '#000000'; ctx.globalAlpha = 0.04; ctx.lineWidth = 1; }
+      } else {
+        ctx.strokeStyle = '#000000'; ctx.globalAlpha = 0.13; ctx.lineWidth = 1;
+      }
+      ctx.beginPath();
+      ctx.moveTo(s.x, s.y);
+      ctx.lineTo(tg.x, tg.y);
+      ctx.stroke();
+    }
+
+    ctx.lineWidth = 1.4;
+    ctx.strokeStyle = '#111111';
+    for (const n of data.nodes) {
+      if (outsidersOnly && n.group === 'giant') continue;
+      ctx.globalAlpha = active ? (n.id === active.id || nb.in.has(n.id) || nb.out.has(n.id) ? 1 : 0.12) : 1;
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, radius(n.in), 0, Math.PI * 2);
+      ctx.fillStyle = colorOf[n.group];
+      ctx.fill();
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  // ---------- zoom + drag ----------
+  const zoom = d3.zoom()
+    .scaleExtent([0.25, 8])
+    .filter((event) => {
+      if (event.type === 'wheel') return !event.button;
+      if (event.button) return false;
+      const [wx, wy] = pointerToWorld(event);
+      return findNodeAt(wx, wy) === null;
+    })
+    .on('zoom', (event) => { currentTransform = event.transform; requestRender(); });
+
+  d3.select(canvas).call(zoom);
+
+  const drag = d3.drag()
+    .subject((event) => {
+      const [wx, wy] = pointerToWorld(event);
+      return findNodeAt(wx, wy);
+    })
+    .on('start', (event) => {
+      if (!event.active) simulation.alphaTarget(0.25).restart();
+      event.subject.fx = event.subject.x;
+      event.subject.fy = event.subject.y;
+    })
+    .on('drag', (event) => {
+      const [wx, wy] = pointerToWorld(event);
+      event.subject.fx = wx;
+      event.subject.fy = wy;
+      requestRender();
+    })
+    .on('end', (event) => {
+      if (!event.active) simulation.alphaTarget(0);
+      event.subject.fx = null;
+      event.subject.fy = null;
+    });
+
+  d3.select(canvas).call(drag);
+
+  canvas.addEventListener('mousemove', (event) => {
+    const [wx, wy] = pointerToWorld(event);
+    const hit = findNodeAt(wx, wy);
+    if (hit !== hoveredNode) { hoveredNode = hit; requestRender(); }
+  });
+  canvas.addEventListener('mouseleave', () => {
+    if (hoveredNode) { hoveredNode = null; requestRender(); }
+  });
+  canvas.addEventListener('click', (event) => {
+    const [wx, wy] = pointerToWorld(event);
+    const hit = findNodeAt(wx, wy);
+    selectedNode = hit;
+    showDossier(hit);
+    requestRender();
+  });
 
   const dossier = document.getElementById('dossier');
 
@@ -687,14 +758,15 @@
   }
 
   function focusNode(d) {
-    highlight(d);
+    selectedNode = d;
     showDossier(d);
+    const rect = canvas.getBoundingClientRect();
     const scale = 1.6;
-    const t = d3.zoomIdentity
-      .translate(W / 2, H / 2)
+    const target = d3.zoomIdentity
+      .translate(rect.width / 2, rect.height / 2)
       .scale(scale)
-      .translate(-d.x0, -d.y0);
-    svg.transition().duration(650).call(zoom.transform, t);
+      .translate(-fit * d.x0, -fit * d.y0);
+    d3.select(canvas).transition().duration(650).call(zoom.transform, target);
   }
 
   const searchInput = document.getElementById('search');
@@ -707,21 +779,22 @@
   const btnOutsiders = document.getElementById('btn-outsiders');
 
   function setFilter(mode) {
+    filterMode = mode;
     btnEveryone.classList.toggle('active', mode === 'everyone');
     btnOutsiders.classList.toggle('active', mode === 'outsiders');
-    node.style('display', d => (mode === 'outsiders' && d.group === 'giant') ? 'none' : null);
-    link.style('display', l => {
-      if (mode !== 'outsiders') return null;
-      const s = l.source.id ?? l.source;
-      return nodesById.get(s).group === 'giant' ? 'none' : null;
-    });
     if (mode === 'outsiders') {
-      svg.transition().duration(500).call(zoom.transform, d3.zoomIdentity);
+      d3.select(canvas).transition().duration(500).call(zoom.transform, d3.zoomIdentity);
+    } else {
+      requestRender();
     }
   }
 
   btnEveryone.addEventListener('click', () => setFilter('everyone'));
   btnOutsiders.addEventListener('click', () => setFilter('outsiders'));
+
+  window.addEventListener('resize', () => { updateFit(); requestRender(); });
+  updateFit();
+  requestRender();
 })();
 </script>
 
