@@ -250,6 +250,24 @@
     pointer-events: none;
   }
 
+  .hover-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translate(-9999px, -9999px);
+    background: var(--ink);
+    color: var(--paper-white);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.25rem 0.55rem;
+    border: 2px solid var(--ink);
+    border-radius: 3px;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 5;
+  }
+
   #dossier {
     flex: 1 1 32%;
     min-width: 240px;
@@ -495,6 +513,7 @@
   <div class="graph-shell">
     <div id="graph-wrap">
       <canvas id="graph"></canvas>
+      <div class="hover-label" id="hover-label"></div>
       <div class="hint">scroll to zoom &middot; drag to fight &middot; click empty space to reset</div>
     </div>
     <div id="dossier">
@@ -720,13 +739,26 @@
 
   d3.select(canvas).call(drag);
 
+  const hoverLabel = document.getElementById('hover-label');
+  const graphWrap = document.getElementById('graph-wrap');
+
   canvas.addEventListener('mousemove', (event) => {
     const [wx, wy] = pointerToWorld(event);
     const hit = findNodeAt(wx, wy);
     if (hit !== hoveredNode) { hoveredNode = hit; requestRender(); }
+    if (hit) {
+      const wrapRect = graphWrap.getBoundingClientRect();
+      const x = event.clientX - wrapRect.left;
+      const y = event.clientY - wrapRect.top;
+      hoverLabel.textContent = hit.name;
+      hoverLabel.style.transform = `translate(${x + 14}px, ${y - 12}px)`;
+    } else {
+      hoverLabel.style.transform = 'translate(-9999px, -9999px)';
+    }
   });
   canvas.addEventListener('mouseleave', () => {
     if (hoveredNode) { hoveredNode = null; requestRender(); }
+    hoverLabel.style.transform = 'translate(-9999px, -9999px)';
   });
   canvas.addEventListener('click', (event) => {
     const [wx, wy] = pointerToWorld(event);
