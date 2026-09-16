@@ -505,16 +505,54 @@
     "United States": "United States of America",
   };
 
-  // Hand-filled fallback for nodes with NO polygon at all in the 50m
-  // dataset (checked against the live file: only Tuvalu, of all 193,
-  // has no matching feature). [lon, lat], from Wikidata's P625
-  // "coordinate location" for the country item (authoritative, not
-  // eyeballed). Keyed by node_id. If a future CDN update drops other
-  // countries' polygons, they'll be logged to the console (see below)
-  // rather than silently missing a marker -- add entries here as needed.
+  // Hand-filled coordinate overrides, checked against the live file and
+  // verified to land inside the country's own polygon (not eyeballed).
+  // [lon, lat], from Wikidata's P625 "coordinate location" for the country
+  // item. Two different reasons a country ends up here:
+  //
+  //  - No matching polygon at all (only Tuvalu, of all 193, as of writing).
+  //  - A polygon exists, but d3.geoCentroid(feature) -- the area-weighted
+  //    centroid across every ring in the country's MultiPolygon -- lands
+  //    somewhere wrong. This 50m dataset bundles some countries' overseas
+  //    territories into the SAME feature as the mainland (e.g. France's
+  //    "France" polygon also includes French Guiana, Réunion, Guadeloupe,
+  //    Martinique, Mayotte), which drags the naive centroid far off; that
+  //    general case is instead handled automatically by computing the
+  //    centroid of just the largest-area ring (see dominantRingCentroid
+  //    below), so France etc. don't need an entry here. The countries
+  //    below are a *different, narrower* failure: their own single main
+  //    landmass is concave enough (Croatia's crescent around Bosnia's
+  //    Neum corridor; Vietnam's S-curve; Israel's shape against the West
+  //    Bank) that even the dominant ring's own area centroid falls just
+  //    outside the country -- confirmed by checking it lands inside a
+  //    neighboring country's polygon instead. Verified with d3.geoContains
+  //    against this exact topojson before being hardcoded.
+  //
+  // Keyed by node_id. If a future CDN update drops other countries'
+  // polygons, they'll be logged to the console (see below) rather than
+  // silently missing a marker -- add entries here as needed.
   const MANUAL_COORDS = {
     "Tuvalu": [178.005556, -7.475],
+    "Croatia": [15.466667, 45.25],
+    "Israel": [35, 31],
+    "Vietnam": [108, 16],
   };
+
+  // For a MultiPolygon feature, geoCentroid area-weights across every ring
+  // -- including small, far-flung exclaves -- which is exactly what drags
+  // countries like France off into the ocean or a neighboring country. Use
+  // the centroid of just the single largest-area ring instead: a country's
+  // own main landmass, not diluted by its overseas territories.
+  function dominantRingCentroid(feature) {
+    if (feature.geometry.type !== "MultiPolygon") return d3.geoCentroid(feature);
+    let best = null, bestArea = -1;
+    feature.geometry.coordinates.forEach(polygonCoords => {
+      const single = { type: "Feature", geometry: { type: "Polygon", coordinates: polygonCoords }, properties: {} };
+      const area = d3.geoArea(single);
+      if (area > bestArea) { bestArea = area; best = single; }
+    });
+    return d3.geoCentroid(best);
+  }
 
   const mapSvg = d3.select("#map");
   const errorBanner = document.getElementById("error-banner");
@@ -604,11 +642,12 @@
   nodes.forEach(n => {
     const topoName = NAME_ALIASES[n.name] || n.name;
     const feature = landByName.get(topoName);
-    if (feature) {
-      coordsByNodeId.set(n.node_id, d3.geoCentroid(feature));
-      topoNameToNodeId.set(topoName, n.node_id);
-    } else if (MANUAL_COORDS[n.node_id]) {
+    if (feature) topoNameToNodeId.set(topoName, n.node_id); // land hover/click works either way
+
+    if (MANUAL_COORDS[n.node_id]) {
       coordsByNodeId.set(n.node_id, MANUAL_COORDS[n.node_id]);
+    } else if (feature) {
+      coordsByNodeId.set(n.node_id, dominantRingCentroid(feature));
     } else {
       unmatched.push(n.node_id);
     }
