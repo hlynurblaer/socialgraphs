@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>United Nations Member States — Wikipedia Link Network</title>
+<style>
+  :root {
+    --un-blue: #009EDB;
+    --un-blue-dim: rgba(0, 158, 219, 0.28);
+    --un-navy: #1F3A5F;
+    --un-gold: #C6A664;
+    --un-gold-dim: rgba(198, 166, 100, 0.32);
+    --bg-page: #F3F7FA;
+    --map-ocean: #E7F1F7;
+    --map-land: #FBFDFE;
+    --map-land-stroke: #9FBFD4;
+    --map-land-stroke-dim: #C9DAE6;
+    --text-body: #24405C;
+    --text-muted: #5B7590;
+    --panel-bg: #FFFFFF;
+    --shadow: 0 8px 28px rgba(31, 58, 95, 0.18);
+    --overlay-bg: rgba(255, 255, 255, 0.94);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: var(--bg-page);
+    color: var(--text-body);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  }
+
+  .app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+
+  /* ---------- header ---------- */
+  .app-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 24px;
+    background: var(--un-navy);
+    color: #fff;
+    flex: 0 0 auto;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .back-link {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.78);
+    text-decoration: none;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 6px;
+    padding: 6px 12px;
+    white-space: nowrap;
+  }
+  .back-link:hover { color: #fff; border-color: rgba(255,255,255,0.6); }
+
+  .emblem { flex: 0 0 auto; }
+  .emblem .land { fill: #cfe6f2; }
+  .emblem .leaf { fill: var(--un-gold); opacity: 0.95; }
+  .emblem .ring { fill: none; stroke: rgba(255,255,255,0.35); stroke-width: 0.6; }
+
+  .titles h1 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+  }
+  .titles p {
+    margin: 2px 0 0;
+    font-size: 12px;
+    color: rgba(255,255,255,0.72);
+    letter-spacing: 0.3px;
+  }
+
+  /* ---------- main / map area ---------- */
+  .map-wrap {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  #map-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  #map {
+    width: 100%;
+    height: 100%;
+    display: block;
+    background: var(--map-ocean);
+  }
+
+  .country {
+    fill: var(--map-land);
+    stroke: var(--map-land-stroke);
+    stroke-width: 0.5px;
+    vector-effect: non-scaling-stroke;
+    transition: fill 0.15s ease, stroke 0.15s ease, opacity 0.2s ease;
+  }
+  .country.member { cursor: pointer; }
+  .country.dim {
+    opacity: 0.45;
+    stroke: var(--map-land-stroke-dim);
+  }
+  .country.focused {
+    fill: #EAF6FD;
+    stroke: var(--un-blue);
+    stroke-width: 1.3px;
+  }
+
+  .marker {
+    fill: var(--un-navy);
+    stroke: #fff;
+    stroke-width: 0.8px;
+    vector-effect: non-scaling-stroke;
+    cursor: pointer;
+    transition: opacity 0.2s ease, r 0.15s ease, fill 0.15s ease;
+  }
+  .marker.dim { opacity: 0.28; }
+  .marker.focused {
+    fill: var(--un-blue);
+    stroke: #fff;
+    stroke-width: 1.4px;
+  }
+
+  .edge {
+    fill: none;
+    vector-effect: non-scaling-stroke;
+    pointer-events: none;
+  }
+  .edge.out { stroke: var(--un-blue); }
+  .edge.in { stroke: var(--un-gold); }
+  .edge.neutral { stroke: #6f8aa3; }
+
+  /* ---------- floating overlays ---------- */
+  .overlay-panel {
+    position: absolute;
+    background: var(--overlay-bg);
+    border: 1px solid rgba(31,58,95,0.12);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(31,58,95,0.12);
+    padding: 10px 12px;
+    font-size: 12.5px;
+    color: var(--text-body);
+  }
+
+  .controls-box {
+    top: 14px;
+    left: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .toggle-group {
+    display: inline-flex;
+    border: 1px solid var(--un-navy);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .toggle-group button {
+    appearance: none;
+    border: none;
+    background: #fff;
+    color: var(--un-navy);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 12px;
+    cursor: pointer;
+    border-right: 1px solid rgba(31,58,95,0.18);
+    letter-spacing: 0.2px;
+  }
+  .toggle-group button:last-child { border-right: none; }
+  .toggle-group button:hover { background: #eef5fa; }
+  .toggle-group button.active {
+    background: var(--un-navy);
+    color: #fff;
+  }
+  .toggle-label {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  .legend { display: flex; flex-direction: column; gap: 5px; }
+  .legend-row { display: flex; align-items: center; gap: 7px; }
+  .legend-swatch {
+    width: 16px; height: 3px; border-radius: 2px; flex: 0 0 auto;
+  }
+  .legend-swatch.out { background: var(--un-blue); }
+  .legend-swatch.in { background: var(--un-gold); }
+
+  .zoom-controls {
+    top: 14px;
+    right: 14px;
+    display: flex;
+    flex-direction: column;
+    padding: 4px;
+    gap: 2px;
+  }
+  .zoom-controls button {
+    appearance: none;
+    border: 1px solid var(--un-navy);
+    background: #fff;
+    color: var(--un-navy);
+    font: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    width: 28px;
+    height: 28px;
+    line-height: 1;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .zoom-controls button:hover { background: #eef5fa; }
+  .zoom-controls button:active { background: var(--un-navy); color: #fff; }
+  .zoom-controls #zoom-reset { font-size: 13px; }
+
+  .hint-box {
+    bottom: 14px;
+    left: 14px;
+    max-width: 320px;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+  .hint-box strong { color: var(--un-navy); }
+
+  #error-banner {
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #fff5f5;
+    border: 1px solid #e3a1a1;
+    color: #8a2b2b;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    max-width: 560px;
+    box-shadow: var(--shadow);
+  }
+  #error-banner code {
+    background: rgba(0,0,0,0.06);
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+
+  /* ---------- side panel ---------- */
+  #side-panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 320px;
+    max-width: 86vw;
+    background: var(--panel-bg);
+    box-shadow: var(--shadow);
+    transform: translateX(105%);
+    transition: transform 0.28s ease;
+    padding: 20px;
+    overflow-y: auto;
+    border-left: 3px solid var(--un-blue);
+  }
+  #side-panel.open { transform: translateX(0); }
+
+  .panel-close {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    appearance: none;
+    border: none;
+    background: transparent;
+    font-size: 20px;
+    line-height: 1;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: none;
+    padding: 4px;
+  }
+  .panel-close:hover { color: var(--un-navy); }
+  .panel-close.visible { display: block; }
+
+  #side-panel h2 {
+    margin: 0 22px 4px 0;
+    font-size: 19px;
+    color: var(--un-navy);
+  }
+  .panel-pin-note {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin: 0 0 14px;
+    font-style: italic;
+  }
+  .panel-description {
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--text-body);
+    margin: 0 0 18px;
+  }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px 8px;
+    margin-bottom: 18px;
+  }
+  .stat-cell {
+    background: #F6FAFC;
+    border-radius: 6px;
+    padding: 8px 8px;
+  }
+  .stat-cell .stat-label {
+    font-size: 9.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--text-muted);
+    display: block;
+    margin-bottom: 2px;
+  }
+  .stat-cell .stat-value {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--un-navy);
+    display: block;
+  }
+  .stat-cell .stat-rank {
+    display: block;
+    font-size: 9.5px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+  .stat-cell.out .stat-value { color: var(--un-blue); }
+  .stat-cell.in .stat-value { color: #9c8039; }
+
+  .wiki-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    background: var(--un-blue);
+    padding: 8px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+  }
+  .wiki-link:hover { background: #0089c0; }
+
+  #side-panel .placeholder {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-top: 40px;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="app-header">
+    <div class="brand">
+      <svg class="emblem" width="44" height="44" viewBox="0 0 64 64" aria-hidden="true">
+        <circle class="ring" cx="32" cy="30" r="27" />
+        <g id="emblem-land"></g>
+        <ellipse cx="26.8" cy="53.3" rx="4.6" ry="2.0" class="leaf" transform="rotate(165 26.8 53.3)" />
+        <ellipse cx="21.2" cy="52.6" rx="4.3" ry="1.9" class="leaf" transform="rotate(150 21.2 52.6)" />
+        <ellipse cx="15.7" cy="50.3" rx="4.0" ry="1.8" class="leaf" transform="rotate(135 15.7 50.3)" />
+        <ellipse cx="10.8" cy="46.2" rx="3.7" ry="1.7" class="leaf" transform="rotate(120 10.8 46.2)" />
+        <ellipse cx="6.9"  cy="40.7" rx="3.4" ry="1.6" class="leaf" transform="rotate(105 6.9 40.7)" />
+        <ellipse cx="4.5"  cy="34.0" rx="3.1" ry="1.5" class="leaf" transform="rotate(90 4.5 34.0)" />
+        <ellipse cx="4.0"  cy="26.5" rx="2.8" ry="1.4" class="leaf" transform="rotate(75 4.0 26.5)" />
+        <ellipse cx="37.2" cy="53.3" rx="4.6" ry="2.0" class="leaf" transform="rotate(15 37.2 53.3)" />
+        <ellipse cx="42.8" cy="52.6" rx="4.3" ry="1.9" class="leaf" transform="rotate(30 42.8 52.6)" />
+        <ellipse cx="48.3" cy="50.3" rx="4.0" ry="1.8" class="leaf" transform="rotate(45 48.3 50.3)" />
+        <ellipse cx="53.2" cy="46.2" rx="3.7" ry="1.7" class="leaf" transform="rotate(60 53.2 46.2)" />
+        <ellipse cx="57.1" cy="40.7" rx="3.4" ry="1.6" class="leaf" transform="rotate(75 57.1 40.7)" />
+        <ellipse cx="59.5" cy="34.0" rx="3.1" ry="1.5" class="leaf" transform="rotate(90 59.5 34.0)" />
+        <ellipse cx="60.0" cy="26.5" rx="2.8" ry="1.4" class="leaf" transform="rotate(105 60.0 26.5)" />
+      </svg>
+      <div class="titles">
+        <h1>United Nations Member States</h1>
+        <p>Wikipedia Link Network</p>
+      </div>
+    </div>
+    <a class="back-link" href="../index.html">&larr; All Issues</a>
+  </header>
+
+  <div class="map-wrap">
+    <div id="map-container">
+      <svg id="map" viewBox="0 0 960 520" preserveAspectRatio="xMidYMid meet"></svg>
+
+      <div class="overlay-panel controls-box">
+        <div>
+          <div class="toggle-label">Edges shown</div>
+          <div class="toggle-group" role="group" aria-label="Edge direction filter">
+            <button type="button" data-mode="out" title="Only this country's outgoing links">Out</button>
+            <button type="button" data-mode="in" title="Only links pointing to this country">In</button>
+            <button type="button" data-mode="both" class="active" title="Only mutual links -- linked both ways">Both</button>
+            <button type="button" data-mode="all" title="Every link touching this country, either direction">All</button>
+          </div>
+        </div>
+        <div class="legend">
+          <div class="legend-row"><span class="legend-swatch out"></span> Out-edge — this article links to that country</div>
+          <div class="legend-row"><span class="legend-swatch in"></span> In-edge — that country's article links here</div>
+        </div>
+      </div>
+
+      <div class="overlay-panel zoom-controls">
+        <button type="button" id="zoom-in" aria-label="Zoom in" title="Zoom in">+</button>
+        <button type="button" id="zoom-out" aria-label="Zoom out" title="Zoom out">&minus;</button>
+        <button type="button" id="zoom-reset" aria-label="Reset view" title="Reset view">&#8634;</button>
+      </div>
+
+      <div class="overlay-panel hint-box">
+        <strong>Hover</strong> a country to preview its links · <strong>Click</strong> to pin the panel open · use the toggle above to change which edges are drawn · <strong>scroll</strong> or the +/&minus; buttons to zoom · <strong>drag</strong> to pan.
+      </div>
+
+      <div id="error-banner" hidden></div>
+
+      <aside id="side-panel">
+        <button class="panel-close" aria-label="Close panel">×</button>
+        <div class="panel-content">
+          <p class="placeholder">Hover or click a country marker to see its details.</p>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+<script>
+(async function () {
+  "use strict";
+
+  // ------------------------------------------------------------------
+  // This page loads data/un_nodes.tsv and data/un_edges.tsv at runtime
+  // with fetch(), which browsers refuse to do against a bare file://
+  // URL (no CORS origin to satisfy). Serve this folder over local HTTP
+  // instead, e.g. from the UN/ directory:
+  //   python3 -m http.server 8000
+  // then open http://localhost:8000/index.html -- or deploy the folder
+  // as-is to GitHub Pages, which serves it over http(s) already.
+  // ------------------------------------------------------------------
+
+  const NODES_URL = "./data/un_nodes.tsv";
+  const EDGES_URL = "./data/un_edges.tsv";
+  const WORLD_ATLAS_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json";
+
+  const OUT_COLOR = "#009EDB";
+  const IN_COLOR = "#C6A664";
+
+  // Wikipedia country-article name (the tsv "name" column) -> the exact
+  // name string world-atlas's countries-50m.json uses for the matching
+  // polygon. Built by diffing the live 193-country node list against the
+  // topojson's own properties.name values -- not guessed: 168 of 193
+  // matched by exact string already, these are the 24 explicit exceptions
+  // (abbreviations, alternate spellings, or an accent Natural Earth drops).
+  const NAME_ALIASES = {
+    "Antigua and Barbuda": "Antigua and Barb.",
+    "Bosnia and Herzegovina": "Bosnia and Herz.",
+    "Cape Verde": "Cabo Verde",
+    "Central African Republic": "Central African Rep.",
+    "Czech Republic": "Czechia",
+    "Democratic Republic of the Congo": "Dem. Rep. Congo",
+    "Dominican Republic": "Dominican Rep.",
+    "Equatorial Guinea": "Eq. Guinea",
+    "Eswatini": "eSwatini",
+    "Federated States of Micronesia": "Micronesia",
+    "Georgia (country)": "Georgia",
+    "Ivory Coast": "Côte d'Ivoire",
+    "Marshall Islands": "Marshall Is.",
+    "North Macedonia": "Macedonia",
+    "Republic of Ireland": "Ireland",
+    "Republic of the Congo": "Congo",
+    "Saint Kitts and Nevis": "St. Kitts and Nevis",
+    "Saint Vincent and the Grenadines": "St. Vin. and Gren.",
+    "Solomon Islands": "Solomon Is.",
+    "South Sudan": "S. Sudan",
+    "São Tomé and Príncipe": "São Tomé and Principe",
+    "The Bahamas": "Bahamas",
+    "The Gambia": "Gambia",
+    "United States": "United States of America",
+  };
+
+  // Hand-filled fallback for nodes with NO polygon at all in the 50m
+  // dataset (checked against the live file: only Tuvalu, of all 193,
+  // has no matching feature). [lon, lat], from Wikidata's P625
+  // "coordinate location" for the country item (authoritative, not
+  // eyeballed). Keyed by node_id. If a future CDN update drops other
+  // countries' polygons, they'll be logged to the console (see below)
+  // rather than silently missing a marker -- add entries here as needed.
+  const MANUAL_COORDS = {
+    "Tuvalu": [178.005556, -7.475],
+  };
+
+  const mapSvg = d3.select("#map");
+  const errorBanner = document.getElementById("error-banner");
+
+  function showError(message) {
+    errorBanner.innerHTML = message;
+    errorBanner.hidden = false;
+  }
+
+  function stripComments(text) {
+    return text.split("\n").filter(line => !line.startsWith("#"));
+  }
+
+  async function loadTSV(url, forcedHeader) {
+    const raw = await d3.text(url);
+    const lines = stripComments(raw);
+    const body = forcedHeader ? [forcedHeader, ...lines] : lines;
+    return d3.tsvParse(body.join("\n"));
+  }
+
+  let nodesRaw, edgesRaw, world;
+  try {
+    [nodesRaw, edgesRaw, world] = await Promise.all([
+      loadTSV(NODES_URL),                              // nodes file already has a real header row
+      loadTSV(EDGES_URL, "source\ttarget"),             // edges file's header line is commented out
+      d3.json(WORLD_ATLAS_URL),
+    ]);
+  } catch (err) {
+    console.error("Failed to load data:", err);
+    showError(
+      "Could not load the network data. This page fetches <code>data/un_nodes.tsv</code> " +
+      "and <code>data/un_edges.tsv</code>, which browsers block over a plain <code>file://</code> URL. " +
+      "Serve this folder locally, e.g. <code>python3 -m http.server 8000</code> from the UN/ folder, " +
+      "then open <code>http://localhost:8000/index.html</code>."
+    );
+    return;
+  }
+
+  // ---------------------------------------------------------------- data --
+  const nodes = nodesRaw.map(d => ({
+    node_id: d.node_id,
+    name: d.name,
+    wikidata_id: d.wikidata_id,
+    url: d.url,
+    description: d.description,
+  }));
+  const nodesById = new Map(nodes.map(n => [n.node_id, n]));
+
+  const edges = edgesRaw
+    .filter(e => nodesById.has(e.source) && nodesById.has(e.target))
+    .map(e => ({ source: e.source, target: e.target }));
+
+  const edgeKeySet = new Set(edges.map(e => e.source + "|" + e.target));
+  const isMutual = (a, b) => edgeKeySet.has(a + "|" + b) && edgeKeySet.has(b + "|" + a);
+
+  const outDegree = new Map(nodes.map(n => [n.node_id, 0]));
+  const inDegree = new Map(nodes.map(n => [n.node_id, 0]));
+  edges.forEach(e => {
+    outDegree.set(e.source, outDegree.get(e.source) + 1);
+    inDegree.set(e.target, inDegree.get(e.target) + 1);
+  });
+
+  function rankBy(getValue) {
+    const sorted = [...nodes].sort((a, b) => {
+      const da = getValue(a.node_id), db = getValue(b.node_id);
+      if (db !== da) return db - da;
+      return a.name.localeCompare(b.name);
+    });
+    return new Map(sorted.map((n, i) => [n.node_id, i + 1]));
+  }
+
+  const totalRankById = rankBy(id => outDegree.get(id) + inDegree.get(id));
+  const outRankById = rankBy(id => outDegree.get(id));
+  const inRankById = rankBy(id => inDegree.get(id));
+
+  console.log(`Loaded ${nodes.length} nodes and ${edges.length} edges.`);
+
+  // ------------------------------------------------------------ geography --
+  const countriesGeo = topojson.feature(world, world.objects.countries);
+  const landByName = new Map(countriesGeo.features.map(f => [f.properties.name, f]));
+
+  // Reverse lookup used for hover/dim on the polygons themselves.
+  const topoNameToNodeId = new Map();
+  const coordsByNodeId = new Map();
+  const unmatched = [];
+
+  nodes.forEach(n => {
+    const topoName = NAME_ALIASES[n.name] || n.name;
+    const feature = landByName.get(topoName);
+    if (feature) {
+      coordsByNodeId.set(n.node_id, d3.geoCentroid(feature));
+      topoNameToNodeId.set(topoName, n.node_id);
+    } else if (MANUAL_COORDS[n.node_id]) {
+      coordsByNodeId.set(n.node_id, MANUAL_COORDS[n.node_id]);
+    } else {
+      unmatched.push(n.node_id);
+    }
+  });
+
+  if (unmatched.length) {
+    console.warn(
+      `${unmatched.length} node(s) have no coordinates (no topojson match and no manual ` +
+      `fallback) -- their markers are skipped rather than guessed at:`, unmatched
+    );
+  }
+
+  // ------------------------------------------------------------ projection --
+  const width = 960, height = 520;
+  const fitFeatures = {
+    type: "FeatureCollection",
+    features: countriesGeo.features.filter(f => f.properties.name !== "Antarctica"),
+  };
+  const projection = d3.geoNaturalEarth1().fitSize([width, height], fitFeatures);
+  const path = d3.geoPath(projection);
+
+  mapSvg.append("rect")
+    .attr("width", width).attr("height", height)
+    .attr("fill", "var(--map-ocean)");
+
+  // Everything pannable/zoomable lives in this one group; the ocean rect
+  // above stays fixed so panning never reveals blank canvas past its edge.
+  const zoomLayer = mapSvg.append("g").attr("class", "zoom-layer");
+
+  const gCountries = zoomLayer.append("g").attr("class", "countries");
+  const gEdges = zoomLayer.append("g").attr("class", "edges");
+  const gMarkers = zoomLayer.append("g").attr("class", "markers");
+
+  const countryPaths = gCountries.selectAll("path.country")
+    .data(countriesGeo.features)
+    .join("path")
+    .attr("class", f => "country" + (topoNameToNodeId.has(f.properties.name) ? " member" : ""))
+    .attr("d", path)
+    .on("mouseenter", (event, f) => onHoverEnter(topoNameToNodeId.get(f.properties.name)))
+    .on("mouseleave", (event, f) => onHoverLeave(topoNameToNodeId.get(f.properties.name)))
+    .on("click", (event, f) => {
+      const id = topoNameToNodeId.get(f.properties.name);
+      if (id) { event.stopPropagation(); onClickNode(id); }
+    });
+
+  // ---- decorative header emblem: azimuthal-equidistant land silhouette ----
+  // Purely a nod to the UN emblem's own north-polar projection -- used only
+  // for this small static icon, never for the interactive map itself, since
+  // that projection badly distorts the southern hemisphere.
+  (function drawEmblem() {
+    const landGeo = topojson.feature(world, world.objects.land);
+    const size = 27;
+    const emblemProjection = d3.geoAzimuthalEquidistant()
+      .rotate([0, -90])
+      .clipAngle(180 - 1e-3)
+      .translate([32, 30])
+      .scale(size);
+    const emblemPath = d3.geoPath(emblemProjection);
+    d3.select("#emblem-land")
+      .selectAll("path")
+      .data(landGeo.features)
+      .join("path")
+      .attr("class", "land")
+      .attr("d", emblemPath);
+  })();
+
+  // --------------------------------------------------------------- edges --
+  function edgePathD(e) {
+    const s = coordsByNodeId.get(e.source), t = coordsByNodeId.get(e.target);
+    if (!s || !t) return null;
+    const [x1, y1] = projection(s), [x2, y2] = projection(t);
+    const dx = x2 - x1, dy = y2 - y1;
+    const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+    // gentle perpendicular bow so overlapping edges stay visually separable
+    const bow = Math.min(dist * 0.14, 40);
+    const mx = (x1 + x2) / 2 - (dy / dist) * bow;
+    const my = (y1 + y2) / 2 + (dx / dist) * bow;
+    return `M${x1},${y1} Q${mx},${my} ${x2},${y2}`;
+  }
+
+  const drawableEdges = edges
+    .map(e => ({ ...e, d: edgePathD(e) }))
+    .filter(e => e.d !== null);
+
+  if (drawableEdges.length !== edges.length) {
+    console.warn(
+      `${edges.length - drawableEdges.length} edge(s) skipped -- one endpoint has no coordinates.`
+    );
+  }
+
+  const edgePaths = gEdges.selectAll("path.edge")
+    .data(drawableEdges)
+    .join("path")
+    .attr("class", "edge")
+    .attr("d", d => d.d);
+
+  // -------------------------------------------------------------- markers --
+  const markerNodes = nodes.filter(n => coordsByNodeId.has(n.node_id));
+
+  const markers = gMarkers.selectAll("circle.marker")
+    .data(markerNodes)
+    .join("circle")
+    .attr("class", "marker")
+    .attr("r", 3.4)
+    .attr("cx", n => projection(coordsByNodeId.get(n.node_id))[0])
+    .attr("cy", n => projection(coordsByNodeId.get(n.node_id))[1])
+    .on("mouseenter", (event, n) => onHoverEnter(n.node_id))
+    .on("mouseleave", (event, n) => onHoverLeave(n.node_id))
+    .on("click", (event, n) => { event.stopPropagation(); onClickNode(n.node_id); });
+
+  markers.append("title").text(n => n.name);
+
+  mapSvg.on("click", () => { pinnedNode = null; hoverNode = null; render(); });
+
+  // -------------------------------------------------------------- zoom ----
+  const zoom = d3.zoom()
+    .scaleExtent([1, 10])
+    .translateExtent([[0, 0], [width, height]])
+    .on("zoom", (event) => {
+      zoomLayer.attr("transform", event.transform);
+    });
+
+  mapSvg.call(zoom);
+
+  document.getElementById("zoom-in").addEventListener("click", (event) => {
+    event.stopPropagation();
+    mapSvg.transition().duration(200).call(zoom.scaleBy, 1.6);
+  });
+  document.getElementById("zoom-out").addEventListener("click", (event) => {
+    event.stopPropagation();
+    mapSvg.transition().duration(200).call(zoom.scaleBy, 1 / 1.6);
+  });
+  document.getElementById("zoom-reset").addEventListener("click", (event) => {
+    event.stopPropagation();
+    mapSvg.transition().duration(300).call(zoom.transform, d3.zoomIdentity);
+  });
+
+  // ------------------------------------------------------------- state ----
+  let mode = "both";
+  let hoverNode = null;
+  let pinnedNode = null;
+
+  function activeNode() { return pinnedNode || hoverNode || null; }
+
+  function onHoverEnter(nodeId) {
+    if (!nodeId || pinnedNode) return;
+    hoverNode = nodeId;
+    render();
+  }
+  function onHoverLeave(nodeId) {
+    if (!nodeId || pinnedNode) return;
+    hoverNode = null;
+    render();
+  }
+  function onClickNode(nodeId) {
+    pinnedNode = (pinnedNode === nodeId) ? null : nodeId;
+    hoverNode = null;
+    render();
+  }
+
+  document.querySelectorAll(".toggle-group button").forEach(btn => {
+    btn.addEventListener("click", (event) => {
+      event.stopPropagation();
+      mode = btn.dataset.mode;
+      document.querySelectorAll(".toggle-group button").forEach(b => b.classList.toggle("active", b === btn));
+      render();
+    });
+  });
+
+  document.querySelector(".panel-close").addEventListener("click", (event) => {
+    event.stopPropagation();
+    pinnedNode = null;
+    hoverNode = null;
+    render();
+  });
+
+  // ------------------------------------------------------------ rendering --
+  // Four toggle modes, all scoped to the active (hovered/pinned) country --
+  // this page never draws the full 2193-edge graph at once, only the active
+  // country's own connections:
+  //   out  - edges the active country's article links out to
+  //   in   - edges that link in to the active country
+  //   both - only RECIPROCAL links: the active country links to X and X
+  //          links back, in both directions
+  //   all  - every edge touching the active country, either direction
+  //          (out edges plus in edges, regardless of reciprocity)
+  function edgeState(e, active) {
+    if (!active) return { show: false, colorClass: "neutral" };
+    const touches = e.source === active || e.target === active;
+    if (!touches) return { show: false, colorClass: "neutral" };
+
+    const other = e.source === active ? e.target : e.source;
+    const colorClass = e.source === active ? "out" : "in";
+
+    if (mode === "out") {
+      return e.source === active ? { show: true, colorClass: "out" } : { show: false, colorClass: "neutral" };
+    }
+    if (mode === "in") {
+      return e.target === active ? { show: true, colorClass: "in" } : { show: false, colorClass: "neutral" };
+    }
+    if (mode === "both") {
+      return isMutual(active, other) ? { show: true, colorClass } : { show: false, colorClass: "neutral" };
+    }
+    return { show: true, colorClass }; // "all"
+  }
+
+  function render() {
+    const active = activeNode();
+
+    // which nodes should stay at full opacity (the focus + whatever it's
+    // actually connected to under the current toggle).
+    let highlighted = null;
+    if (active) {
+      highlighted = new Set([active]);
+      drawableEdges.forEach(e => {
+        const st = edgeState(e, active);
+        if (st.show) { highlighted.add(e.source); highlighted.add(e.target); }
+      });
+    }
+
+    edgePaths
+      .classed("out", false).classed("in", false).classed("neutral", false)
+      .each(function (e) {
+        const st = edgeState(e, active);
+        const sel = d3.select(this);
+        sel.classed(st.colorClass, true)
+           .style("display", st.show ? null : "none")
+           .style("opacity", st.show ? 0.85 : 0)
+           .style("stroke-width", 1.3);
+      });
+
+    countryPaths
+      .classed("dim", f => !!(highlighted && !highlighted.has(topoNameToNodeId.get(f.properties.name))))
+      .classed("focused", f => topoNameToNodeId.get(f.properties.name) === active);
+
+    markers
+      .classed("dim", n => !!(highlighted && !highlighted.has(n.node_id)))
+      .classed("focused", n => n.node_id === active)
+      .attr("r", n => n.node_id === active ? 6 : 3.4);
+
+    renderPanel(active);
+  }
+
+  function renderPanel(active) {
+    const panel = document.getElementById("side-panel");
+    const closeBtn = document.querySelector(".panel-close");
+    const content = document.querySelector(".panel-content");
+
+    closeBtn.classList.toggle("visible", !!pinnedNode);
+
+    if (!active) {
+      panel.classList.remove("open");
+      return;
+    }
+    panel.classList.add("open");
+
+    const n = nodesById.get(active);
+    const outD = outDegree.get(active) || 0;
+    const inD = inDegree.get(active) || 0;
+    const total = outD + inD;
+    const outRank = outRankById.get(active);
+    const inRank = inRankById.get(active);
+    const totalRank = totalRankById.get(active);
+
+    content.innerHTML = "";
+    const h2 = document.createElement("h2");
+    h2.textContent = n.name;
+    content.appendChild(h2);
+
+    const pinNote = document.createElement("p");
+    pinNote.className = "panel-pin-note";
+    pinNote.textContent = pinnedNode ? "Pinned — click the country again, or ×, to release." : "Previewing — click to pin.";
+    content.appendChild(pinNote);
+
+    const desc = document.createElement("p");
+    desc.className = "panel-description";
+    desc.textContent = n.description || "No description available.";
+    content.appendChild(desc);
+
+    const grid = document.createElement("div");
+    grid.className = "stat-grid";
+    grid.innerHTML = `
+      <div class="stat-cell out">
+        <span class="stat-label">Out-degree</span>
+        <span class="stat-value">${outD}</span>
+        <span class="stat-rank">rank ${outRank} of ${nodes.length}</span>
+      </div>
+      <div class="stat-cell in">
+        <span class="stat-label">In-degree</span>
+        <span class="stat-value">${inD}</span>
+        <span class="stat-rank">rank ${inRank} of ${nodes.length}</span>
+      </div>
+      <div class="stat-cell total">
+        <span class="stat-label">Total degree</span>
+        <span class="stat-value">${total}</span>
+        <span class="stat-rank">rank ${totalRank} of ${nodes.length}</span>
+      </div>
+    `;
+    content.appendChild(grid);
+
+    const link = document.createElement("a");
+    link.className = "wiki-link";
+    link.href = n.url;
+    link.target = "_blank";
+    link.rel = "noopener";
+    link.textContent = "View on Wikipedia →";
+    content.appendChild(link);
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>

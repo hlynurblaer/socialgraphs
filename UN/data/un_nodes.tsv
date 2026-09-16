@@ -1,0 +1,198 @@
+# UN member-state Wikipedia network -- built 2026-09-09
+# All 193 UN member states from Wikipedia's Category:Member_states_of_the_United_Nations
+# (redirects resolved; 2 miscategorized non-country pages excluded, see notebook Step 1).
+# 193 nodes. node_id matches un_edges.tsv.
+node_id	name	wikidata_id	url	description
+Afghanistan	Afghanistan	Q889	https://en.wikipedia.org/wiki/Afghanistan	Afghanistan, officially the Islamic Emirate of Afghanistan, is a landlocked country located at the crossroads of Central and South Asia.
+Albania	Albania	Q222	https://en.wikipedia.org/wiki/Albania	Albania, officially the Republic of Albania, is a country in Southeast Europe.
+Algeria	Algeria	Q262	https://en.wikipedia.org/wiki/Algeria	Algeria, officially the People's Democratic Republic of Algeria, is a country in the Maghreb region of North Africa.
+Andorra	Andorra	Q228	https://en.wikipedia.org/wiki/Andorra	Andorra, officially the Principality of Andorra, is a landlocked country on the Iberian Peninsula, in the eastern Pyrenees in southwestern Europe, bordered by France to the north and Spain to the south.
+Angola	Angola	Q916	https://en.wikipedia.org/wiki/Angola	Angola, officially the Republic of Angola, is a country on the western coast of Southern Africa.
+Antigua_and_Barbuda	Antigua and Barbuda	Q781	https://en.wikipedia.org/wiki/Antigua_and_Barbuda	Antigua and Barbuda is an archipelagic country in the Caribbean composed of Antigua, Barbuda, and dozens of other small islands.
+Argentina	Argentina	Q414	https://en.wikipedia.org/wiki/Argentina	Argentina, officially the Argentine Republic, is a country in the far south of South America.
+Armenia	Armenia	Q399	https://en.wikipedia.org/wiki/Armenia	Armenia, officially the Republic of Armenia, is a landlocked country in the Armenian highlands of West Asia.
+Australia	Australia	Q408	https://en.wikipedia.org/wiki/Australia	Australia, officially the Commonwealth of Australia, is a country comprising the mainland of the Australian continent, the island of Tasmania and numerous smaller islands.
+Austria	Austria	Q40	https://en.wikipedia.org/wiki/Austria	Austria, formally the Republic of Austria, is a landlocked country in Central Europe, lying in the Eastern Alps.
+Azerbaijan	Azerbaijan	Q227	https://en.wikipedia.org/wiki/Azerbaijan	Azerbaijan, officially the Republic of Azerbaijan, is a transcontinental landlocked country at the boundary of Western Asia and Eastern Europe.
+Bahrain	Bahrain	Q398	https://en.wikipedia.org/wiki/Bahrain	Bahrain, officially the Kingdom of Bahrain, is an island country in the eastern part of Arabian Peninsula in West Asia.
+Bangladesh	Bangladesh	Q902	https://en.wikipedia.org/wiki/Bangladesh	Bangladesh, officially the People's Republic of Bangladesh, is a country in South Asia.
+Barbados	Barbados	Q244	https://en.wikipedia.org/wiki/Barbados	Barbados is an island nation in the Caribbean located in the Atlantic Ocean.
+Belarus	Belarus	Q184	https://en.wikipedia.org/wiki/Belarus	Belarus, officially the Republic of Belarus, is a landlocked country in Eastern Europe.
+Belgium	Belgium	Q31	https://en.wikipedia.org/wiki/Belgium	Belgium, officially the Kingdom of Belgium, is a country in Northwestern Europe.
+Belize	Belize	Q242	https://en.wikipedia.org/wiki/Belize	Belize is a country on the north-eastern coast of Central America.
+Benin	Benin	Q962	https://en.wikipedia.org/wiki/Benin	Benin, officially the Republic of Benin, formerly known as Dahomey, is a country in West Africa.
+Bhutan	Bhutan	Q917	https://en.wikipedia.org/wiki/Bhutan	Bhutan, officially the Kingdom of Bhutan, is a landlocked country in South Asia, located in the Eastern Himalayas, bordering China's Tibet Autonomous Region to the north and northwest and India to the south and southeast.
+Bolivia	Bolivia	Q750	https://en.wikipedia.org/wiki/Bolivia	Bolivia, officially the Plurinational State of Bolivia, is a landlocked country located in central South America.
+Bosnia_and_Herzegovina	Bosnia and Herzegovina	Q225	https://en.wikipedia.org/wiki/Bosnia_and_Herzegovina	Bosnia and Herzegovina, often referred to as Bosnia-Herzegovina or simply Bosnia, is a country in Southeast Europe.
+Botswana	Botswana	Q963	https://en.wikipedia.org/wiki/Botswana	Botswana, officially the Republic of Botswana, is a landlocked country in Southern Africa.
+Brazil	Brazil	Q155	https://en.wikipedia.org/wiki/Brazil	Brazil, officially the Federative Republic of Brazil, is the largest country in South America.
+Brunei	Brunei	Q921	https://en.wikipedia.org/wiki/Brunei	Brunei, officially Brunei Darussalam, is a country in Southeast Asia, situated on the northern coast of the island of Borneo.
+Bulgaria	Bulgaria	Q219	https://en.wikipedia.org/wiki/Bulgaria	Bulgaria, officially the Republic of Bulgaria, is a country in Southeastern Europe.
+Burkina_Faso	Burkina Faso	Q965	https://en.wikipedia.org/wiki/Burkina_Faso	Burkina Faso is a landlocked country in West Africa.
+Burundi	Burundi	Q967	https://en.wikipedia.org/wiki/Burundi	Burundi, officially the Republic of Burundi, is a landlocked country in East Africa.
+Cambodia	Cambodia	Q424	https://en.wikipedia.org/wiki/Cambodia	Cambodia, officially the Kingdom of Cambodia, is a country in Mainland Southeast Asia.
+Cameroon	Cameroon	Q1009	https://en.wikipedia.org/wiki/Cameroon	Cameroon, officially the Republic of Cameroon, is a country in Central Africa.
+Canada	Canada	Q16	https://en.wikipedia.org/wiki/Canada	Canada is a country in North America.
+Cape_Verde	Cape Verde	Q1011	https://en.wikipedia.org/wiki/Cape_Verde	Cape Verde, also referred to in English by its  Portuguese name Cabo Verde, and known officially as the Republic of Cabo Verde, is an archipelagic country in the eastern Atlantic Ocean, off the coast of West Africa.
+Central_African_Republic	Central African Republic	Q929	https://en.wikipedia.org/wiki/Central_African_Republic	The Central African Republic (CAR) is a landlocked country in Central Africa.
+Chad	Chad	Q657	https://en.wikipedia.org/wiki/Chad	Chad, officially the Republic of Chad, is a landlocked country in Central Africa.
+Chile	Chile	Q298	https://en.wikipedia.org/wiki/Chile	Chile, officially the Republic of Chile, is a country in the Southern Cone of southwestern South America.
+China	China	Q148	https://en.wikipedia.org/wiki/China	China, officially the People's Republic of China (PRC), is a country in East Asia.
+Colombia	Colombia	Q739	https://en.wikipedia.org/wiki/Colombia	Colombia, officially the Republic of Colombia, is a country located in South America, with insular regions in North America.
+Comoros	Comoros	Q970	https://en.wikipedia.org/wiki/Comoros	The Comoros,  officially the Union of the Comoros, is an archipelagic country made up of three islands in Southeast Africa, located at the northern end of the Mozambique Channel in the Indian Ocean.
+Costa_Rica	Costa Rica	Q800	https://en.wikipedia.org/wiki/Costa_Rica	Costa Rica, officially the Republic of Costa Rica, is a country in Central America.
+Croatia	Croatia	Q224	https://en.wikipedia.org/wiki/Croatia	Croatia, officially the Republic of Croatia, is a country in Central and Southeastern Europe, on the coast of the Adriatic Sea.
+Cuba	Cuba	Q241	https://en.wikipedia.org/wiki/Cuba	Cuba, officially the Republic of Cuba, is an island country in the Caribbean.
+Cyprus	Cyprus	Q229	https://en.wikipedia.org/wiki/Cyprus	Cyprus, officially the Republic of Cyprus, is an island country in the eastern Mediterranean Sea, located off the coast of the Levant mainland in West Asia.
+Czech_Republic	Czech Republic	Q213	https://en.wikipedia.org/wiki/Czech_Republic	The Czech Republic, also known as Czechia and historically known as Bohemia, is a landlocked country in Central Europe.
+Democratic_Republic_of_the_Congo	Democratic Republic of the Congo	Q974	https://en.wikipedia.org/wiki/Democratic_Republic_of_the_Congo	The Democratic Republic of the Congo (DRC), also known as the DR Congo, Congo-Kinshasa, or simply the Congo, and formerly named Zaire, is a country in Central Africa.
+Denmark	Denmark	Q35	https://en.wikipedia.org/wiki/Denmark	Denmark is a Nordic country in Northern Europe.
+Djibouti	Djibouti	Q977	https://en.wikipedia.org/wiki/Djibouti	Djibouti, officially the Republic of Djibouti, is a country in the Horn of Africa, bordered by Somalia to the south, Ethiopia to the southwest, Eritrea in the north, and the Red Sea and the Gulf of Aden to the east.
+Dominica	Dominica	Q784	https://en.wikipedia.org/wiki/Dominica	Dominica officially the Commonwealth of Dominica, is an island country in the Caribbean.
+Dominican_Republic	Dominican Republic	Q786	https://en.wikipedia.org/wiki/Dominican_Republic	The Dominican Republic is an island country on the eastern part of the Caribbean island of Hispaniola in the Greater Antilles of the Caribbean Sea in the North Atlantic Ocean.
+Ecuador	Ecuador	Q736	https://en.wikipedia.org/wiki/Ecuador	Ecuador, officially the Republic of Ecuador, is a country in northwestern South America, bordered by Colombia on the north, Peru on the east and south, and the Pacific Ocean on the west.
+Egypt	Egypt	Q79	https://en.wikipedia.org/wiki/Egypt	Egypt, officially the Arab Republic of Egypt, is a country spanning the northeast corner of Africa and southwest corner of Asia via the Sinai Peninsula.
+El_Salvador	El Salvador	Q792	https://en.wikipedia.org/wiki/El_Salvador	El Salvador, officially the Republic of El Salvador, is a sovereign nation in Central America.
+Equatorial_Guinea	Equatorial Guinea	Q983	https://en.wikipedia.org/wiki/Equatorial_Guinea	Equatorial Guinea, officially the Republic of Equatorial Guinea, is a country on the west coast of Central Africa and the only Spanish-speaking country in Africa.
+Eritrea	Eritrea	Q986	https://en.wikipedia.org/wiki/Eritrea	Eritrea, officially the State of Eritrea, is a country in the Horn of Africa region of East Africa.
+Estonia	Estonia	Q191	https://en.wikipedia.org/wiki/Estonia	Estonia, officially the Republic of Estonia, is a country in the Baltic region of Northern Europe.
+Eswatini	Eswatini	Q1050	https://en.wikipedia.org/wiki/Eswatini	Eswatini, formally the Kingdom of Eswatini (historically called KaNgwane), also known by its former official names Swaziland and the Kingdom of Swaziland, is a landlocked country in Southern Africa.
+Ethiopia	Ethiopia	Q115	https://en.wikipedia.org/wiki/Ethiopia	Ethiopia, officially the Federal Democratic Republic of Ethiopia (FDRE), is a landlocked country located in the Horn of Africa region of East Africa.
+Federated_States_of_Micronesia	Federated States of Micronesia	Q702	https://en.wikipedia.org/wiki/Federated_States_of_Micronesia	The Federated States of Micronesia (FSM), or simply Micronesia ( ), is an island country in Micronesia, a region of Oceania.
+Fiji	Fiji	Q712	https://en.wikipedia.org/wiki/Fiji	Fiji, officially the Republic of Fiji, is an archipelagic country in Melanesia, part of Oceania in the South Pacific Ocean.
+Finland	Finland	Q33	https://en.wikipedia.org/wiki/Finland	Finland, officially the Republic of Finland, is a Nordic country in Northern Europe.
+France	France	Q142	https://en.wikipedia.org/wiki/France	France, officially the French Republic, is a country primarily located in Western Europe.
+Gabon	Gabon	Q1000	https://en.wikipedia.org/wiki/Gabon	Gabon, officially the Gabonese Republic, is a country on the Atlantic coast of Central Africa, lying on the equator.
+Georgia_(country)	Georgia (country)	Q230	https://en.wikipedia.org/wiki/Georgia_(country)	Georgia is a country in the Caucasus region on the east coast of the Black Sea.
+Germany	Germany	Q183	https://en.wikipedia.org/wiki/Germany	Germany, officially the Federal Republic of Germany, is a country in Western and Central Europe.
+Ghana	Ghana	Q117	https://en.wikipedia.org/wiki/Ghana	Ghana, officially the Republic of Ghana, is a country in West Africa.
+Greece	Greece	Q41	https://en.wikipedia.org/wiki/Greece	Greece, officially the Hellenic Republic, is a country in Southeastern Europe.
+Grenada	Grenada	Q769	https://en.wikipedia.org/wiki/Grenada	Grenada is an archipelagic country of the West Indies in the eastern Caribbean Sea.
+Guatemala	Guatemala	Q774	https://en.wikipedia.org/wiki/Guatemala	Guatemala, officially the Republic of Guatemala, is a country in northern Central America.
+Guinea	Guinea	Q1006	https://en.wikipedia.org/wiki/Guinea	Guinea, officially the Republic of Guinea, is a coastal country located in West Africa.
+Guinea-Bissau	Guinea-Bissau	Q1007	https://en.wikipedia.org/wiki/Guinea-Bissau	Guinea-Bissau, officially the Republic of Guinea-Bissau, is a country in West Africa that covers 36,125 square kilometres (13,948 sq mi) with an estimated population of 2,080,000.
+Guyana	Guyana	Q734	https://en.wikipedia.org/wiki/Guyana	Guyana, officially the Co-operative Republic of Guyana, is a country on the northern coast of South America.
+Haiti	Haiti	Q790	https://en.wikipedia.org/wiki/Haiti	Haiti, officially the Republic of Haiti, is a country in the Caribbean on the island of Hispaniola in the Caribbean Sea, east of Cuba and Jamaica and south of The Bahamas.
+Honduras	Honduras	Q783	https://en.wikipedia.org/wiki/Honduras	Honduras, officially the Republic of Honduras, is a country in Central America.
+Hungary	Hungary	Q28	https://en.wikipedia.org/wiki/Hungary	Hungary is a landlocked country in Central Europe.
+Iceland	Iceland	Q189	https://en.wikipedia.org/wiki/Iceland	Iceland is a Nordic island country between the Arctic Ocean and the North Atlantic Ocean, located on the Mid-Atlantic Ridge between Europe and North America.
+India	India	Q668	https://en.wikipedia.org/wiki/India	India, officially the Republic of India, is a country in South Asia.
+Indonesia	Indonesia	Q252	https://en.wikipedia.org/wiki/Indonesia	Indonesia, officially the Republic of Indonesia, is a country in Southeast Asia and Oceania, between the Indian and Pacific oceans.
+Iran	Iran	Q794	https://en.wikipedia.org/wiki/Iran	Iran, officially the Islamic Republic of Iran, and historically known as Persia, is a country in West Asia.
+Iraq	Iraq	Q796	https://en.wikipedia.org/wiki/Iraq	Iraq, officially the Republic of Iraq, historically known in the west as Mesopotamia,  is a country in West Asia.
+Israel	Israel	Q801	https://en.wikipedia.org/wiki/Israel	Israel, officially the State of Israel, is a country in the Southern Levant region of West Asia.
+Italy	Italy	Q38	https://en.wikipedia.org/wiki/Italy	Italy, officially the Italian Republic, is a country in Southern and Western Europe.
+Ivory_Coast	Ivory Coast	Q1008	https://en.wikipedia.org/wiki/Ivory_Coast	Ivory Coast, also known as Côte d'Ivoire and officially as the Republic of Côte d'Ivoire, is a country on the southern coast of West Africa.
+Jamaica	Jamaica	Q766	https://en.wikipedia.org/wiki/Jamaica	Jamaica is an island country in the Caribbean, covering 10,991 square kilometres (4,244 sq mi).
+Japan	Japan	Q17	https://en.wikipedia.org/wiki/Japan	Japan is an island country in East Asia.
+Jordan	Jordan	Q810	https://en.wikipedia.org/wiki/Jordan	Jordan, officially the Hashemite Kingdom of Jordan, is a country in the Southern Levant region of West Asia.
+Kazakhstan	Kazakhstan	Q232	https://en.wikipedia.org/wiki/Kazakhstan	Kazakhstan, officially the Republic of Kazakhstan, is a landlocked country situated primarily in Central Asia, with a portion of its territory extending into Eastern Europe.
+Kenya	Kenya	Q114	https://en.wikipedia.org/wiki/Kenya	Kenya, officially the Republic of Kenya, is a country located in East Africa.
+Kiribati	Kiribati	Q710	https://en.wikipedia.org/wiki/Kiribati	Kiribati, officially the Republic of Kiribati, is an archipelagic country spanning the Micronesia and Polynesia sub-regions of Oceania in the central Pacific Ocean.
+Kuwait	Kuwait	Q817	https://en.wikipedia.org/wiki/Kuwait	Kuwait, officially the State of Kuwait, is a country in West Asia.
+Kyrgyzstan	Kyrgyzstan	Q813	https://en.wikipedia.org/wiki/Kyrgyzstan	Kyrgyzstan, officially the Kyrgyz Republic, formerly known as Kirghizia, is a landlocked country located in Central Asia, lying in the Tian Shan and Pamir mountain ranges.
+Laos	Laos	Q819	https://en.wikipedia.org/wiki/Laos	Laos, officially the Lao People's Democratic Republic (LPDR), is a country in Mainland Southeast Asia, and the only landlocked country in Southeast Asia.
+Latvia	Latvia	Q211	https://en.wikipedia.org/wiki/Latvia	Latvia, officially the Republic of Latvia, is a country in the Baltic region of northern Europe.
+Lebanon	Lebanon	Q822	https://en.wikipedia.org/wiki/Lebanon	Lebanon, officially the Lebanese Republic, is a country in the Levant region of West Asia.
+Lesotho	Lesotho	Q1013	https://en.wikipedia.org/wiki/Lesotho	Lesotho (  lih-SOO-too; Sotho pronunciation: [lɪˈsʊːtʰʊ]), officially the Kingdom of Lesotho, is a landlocked country in Southern Africa.
+Liberia	Liberia	Q1014	https://en.wikipedia.org/wiki/Liberia	Liberia, officially the Republic of Liberia, is a country on the West African coast.
+Libya	Libya	Q1016	https://en.wikipedia.org/wiki/Libya	Libya, officially the State of Libya, is a country in the Maghreb region of North Africa.
+Liechtenstein	Liechtenstein	Q347	https://en.wikipedia.org/wiki/Liechtenstein	Liechtenstein ( , LIK-tən-stine; pronounced [ˈlɪçtn̩ʃtaɪn] ; Alemannic German: Liachtaschta), officially the Principality of Liechtenstein (German: Fürstentum Liechtenstein [ˈfʏʁstn̩tuːm ˈlɪçtn̩ʃtaɪn] ), is a doubly landlocked country in the Central European Alps.
+Lithuania	Lithuania	Q37	https://en.wikipedia.org/wiki/Lithuania	Lithuania, officially the Republic of Lithuania, is a country in the Baltic region of Europe.
+Luxembourg	Luxembourg	Q32	https://en.wikipedia.org/wiki/Luxembourg	Luxembourg,  officially the Grand Duchy of Luxembourg, is a landlocked country in Western Europe.
+Madagascar	Madagascar	Q1019	https://en.wikipedia.org/wiki/Madagascar	Madagascar, officially the Republic of Madagascar, is an island country in the Indian Ocean that includes the island of Madagascar and numerous smaller peripheral islands.
+Malawi	Malawi	Q1020	https://en.wikipedia.org/wiki/Malawi	Malawi, officially the Republic of Malawi, is a landlocked country in Southeast Africa.
+Malaysia	Malaysia	Q833	https://en.wikipedia.org/wiki/Malaysia	Malaysia is a country in Southeast Asia.
+Maldives	Maldives	Q826	https://en.wikipedia.org/wiki/Maldives	The Maldives, officially the Republic of Maldives, and historically known as the Maldive Islands, is an archipelagic country in South Asia, located in the Indian Ocean, near the southeastern boundary of the Arabian Sea.
+Mali	Mali	Q912	https://en.wikipedia.org/wiki/Mali	Mali, officially the Republic of Mali, is a landlocked country in West Africa.
+Malta	Malta	Q233	https://en.wikipedia.org/wiki/Malta	Malta, officially the Republic of Malta, is an island country located in the central Mediterranean Sea.
+Marshall_Islands	Marshall Islands	Q709	https://en.wikipedia.org/wiki/Marshall_Islands	The Marshall Islands, officially the Republic of the Marshall Islands, is an archipelagic country in Oceania.
+Mauritania	Mauritania	Q1025	https://en.wikipedia.org/wiki/Mauritania	Mauritania, officially the Islamic Republic of Mauritania, is a country in the Maghreb region of West Africa.
+Mauritius	Mauritius	Q1027	https://en.wikipedia.org/wiki/Mauritius	Mauritius, officially the Republic of Mauritius, is an island country in the Indian Ocean, located about 1,100 nautical miles (2,000 km; 1,300 mi) off the southeastern coast of Africa, east of Madagascar.
+Mexico	Mexico	Q96	https://en.wikipedia.org/wiki/Mexico	Mexico, officially the United Mexican States, is a country in North America.
+Moldova	Moldova	Q217	https://en.wikipedia.org/wiki/Moldova	Moldova, officially the Republic of Moldova, is a landlocked country in Eastern Europe, with an area of 33,843 km2 (13,067 sq mi) and a population of 2.38 million.
+Monaco	Monaco	Q235	https://en.wikipedia.org/wiki/Monaco	Monaco, officially the Principality of Monaco, is a sovereign city-state and microstate in Western Europe.
+Mongolia	Mongolia	Q711	https://en.wikipedia.org/wiki/Mongolia	Mongolia is a landlocked country in East Asia.
+Montenegro	Montenegro	Q236	https://en.wikipedia.org/wiki/Montenegro	Montenegro is a country in Southeast Europe, on the Balkan Peninsula.
+Morocco	Morocco	Q1028	https://en.wikipedia.org/wiki/Morocco	Morocco, officially the Kingdom of Morocco, is a country in the Maghreb region of North Africa.
+Mozambique	Mozambique	Q1029	https://en.wikipedia.org/wiki/Mozambique	Mozambique, officially the Republic of Mozambique, is a country in Southeast Africa bordered by the Indian Ocean to the east, Tanzania to the north, Malawi and Zambia to the northwest, Zimbabwe to the west, and Eswatini and South Africa to the south and southwest.
+Myanmar	Myanmar	Q836	https://en.wikipedia.org/wiki/Myanmar	Myanmar, officially the Republic of the Union of Myanmar and also referred to as Burma (the official English name until 1989), is a country in northwest Southeast Asia.
+Namibia	Namibia	Q1030	https://en.wikipedia.org/wiki/Namibia	Namibia, officially the Republic of Namibia, is a country in Southern Africa.
+Nauru	Nauru	Q697	https://en.wikipedia.org/wiki/Nauru	Nauru, officially the Republic of Naoero, is an island country and microstate in the South Pacific Ocean.
+Nepal	Nepal	Q837	https://en.wikipedia.org/wiki/Nepal	Nepal, officially the Federal Democratic Republic of Nepal, is a landlocked country in South Asia.
+Netherlands	Netherlands	Q55	https://en.wikipedia.org/wiki/Netherlands	The Netherlands, also informally known as Holland, is a country in Northwestern Europe, with overseas territories in the Caribbean.
+New_Zealand	New Zealand	Q664	https://en.wikipedia.org/wiki/New_Zealand	New Zealand is an island country in the southwestern Pacific Ocean.
+Nicaragua	Nicaragua	Q811	https://en.wikipedia.org/wiki/Nicaragua	Nicaragua, officially the Republic of Nicaragua, is a country in Central America, comprising 130,370 square kilometers (50,340 sq mi).
+Niger	Niger	Q1032	https://en.wikipedia.org/wiki/Niger	Niger, officially the Republic of the Niger, is a landlocked country in West Africa.
+Nigeria	Nigeria	Q1033	https://en.wikipedia.org/wiki/Nigeria	Nigeria, officially the Federal Republic of Nigeria, is a country in West Africa between the Sahel to the north and the Gulf of Guinea in the Atlantic Ocean to the south.
+North_Korea	North Korea	Q423	https://en.wikipedia.org/wiki/North_Korea	North Korea, officially the Democratic People's Republic of Korea (DPRK), is a country in East Asia.
+North_Macedonia	North Macedonia	Q221	https://en.wikipedia.org/wiki/North_Macedonia	North Macedonia, officially the Republic of North Macedonia, is a landlocked country in Southeast Europe.
+Norway	Norway	Q20	https://en.wikipedia.org/wiki/Norway	Norway, officially the Kingdom of Norway, is a Nordic country comprising the western and northernmost parts of the Scandinavian Peninsula in Northern Europe, the remote Arctic island Jan Mayen and the archipelago Svalbard.
+Oman	Oman	Q842	https://en.wikipedia.org/wiki/Oman	Oman, officially the Sultanate of Oman, is a country in the southeastern Arabian Peninsula in West Asia.
+Pakistan	Pakistan	Q843	https://en.wikipedia.org/wiki/Pakistan	Pakistan, officially the Islamic Republic of Pakistan, is a country in South Asia.
+Palau	Palau	Q695	https://en.wikipedia.org/wiki/Palau	Palau, officially the Republic of Palau, is an island country located in the Micronesia subregion of Oceania in the western Pacific Ocean.
+Panama	Panama	Q804	https://en.wikipedia.org/wiki/Panama	Panama, officially the Republic of Panama, is a country located at the southern end of Central America in North America, bordering South America.
+Papua_New_Guinea	Papua New Guinea	Q691	https://en.wikipedia.org/wiki/Papua_New_Guinea	Papua New Guinea (PNG), officially the Independent State of Papua New Guinea, is an island country in Oceania that comprises the eastern half of the island of New Guinea and offshore islands in Melanesia, a region of the southwestern Pacific Ocean north of Australia.
+Paraguay	Paraguay	Q733	https://en.wikipedia.org/wiki/Paraguay	Paraguay, officially the Republic of Paraguay, is a landlocked country located in the central region of South America.
+Peru	Peru	Q419	https://en.wikipedia.org/wiki/Peru	Peru, officially the Republic of Peru, is a country in western South America.
+Philippines	Philippines	Q928	https://en.wikipedia.org/wiki/Philippines	The Philippines, officially the Republic of the Philippines, is an archipelagic country in Southeast Asia.
+Poland	Poland	Q36	https://en.wikipedia.org/wiki/Poland	Poland, officially the Republic of Poland, is a country in Central Europe.
+Portugal	Portugal	Q45	https://en.wikipedia.org/wiki/Portugal	Portugal, officially the Portuguese Republic, is a country in Southwestern Europe.
+Qatar	Qatar	Q846	https://en.wikipedia.org/wiki/Qatar	Qatar, officially the State of Qatar, is a country in West Asia.
+Republic_of_Ireland	Republic of Ireland	Q27	https://en.wikipedia.org/wiki/Republic_of_Ireland	Ireland (Irish: Éire [ˈeːɾʲə] ), also known as the Republic of Ireland (Poblacht na hÉireann), is a country in Northwestern Europe.
+Republic_of_the_Congo	Republic of the Congo	Q971	https://en.wikipedia.org/wiki/Republic_of_the_Congo	The Republic of the Congo, also known as Congo-Brazzaville, the Congo Republic or simply Congo, is a country located on the western coast of Central Africa to the west of the Congo River.
+Romania	Romania	Q218	https://en.wikipedia.org/wiki/Romania	Romania is a country in Central and Southeastern Europe.
+Russia	Russia	Q159	https://en.wikipedia.org/wiki/Russia	Russia, or the Russian Federation, is a country in Eastern Europe and North Asia.
+Rwanda	Rwanda	Q1037	https://en.wikipedia.org/wiki/Rwanda	Rwanda, officially the Republic of Rwanda, is a landlocked country in East Africa.
+Saint_Kitts_and_Nevis	Saint Kitts and Nevis	Q763	https://en.wikipedia.org/wiki/Saint_Kitts_and_Nevis	Saint Kitts and Nevis (SKN), officially the Federation of Saint Christopher and Nevis or the Federation of Saint Kitts and Nevis, is an island country located in the Caribbean consisting of the two islands of Saint Kitts and Nevis, in the Leeward Islands chain of the Lesser Antilles.
+Saint_Lucia	Saint Lucia	Q760	https://en.wikipedia.org/wiki/Saint_Lucia	Saint Lucia (also written as St.
+Saint_Vincent_and_the_Grenadines	Saint Vincent and the Grenadines	Q757	https://en.wikipedia.org/wiki/Saint_Vincent_and_the_Grenadines	Saint Vincent and the Grenadines, sometimes known simply as Saint Vincent, is an archipelagic country in the eastern Caribbean.
+Samoa	Samoa	Q683	https://en.wikipedia.org/wiki/Samoa	Samoa, officially the Independent State of Samoa, is an island country in Polynesia, a part of Oceania, which is in the South Pacific Ocean.
+San_Marino	San Marino	Q238	https://en.wikipedia.org/wiki/San_Marino	San Marino, officially the Republic of San Marino (RSM), is a landlocked country in Southern Europe, completely surrounded by Italy.
+Saudi_Arabia	Saudi Arabia	Q851	https://en.wikipedia.org/wiki/Saudi_Arabia	Saudi Arabia, officially the Kingdom of Saudi Arabia (KSA),  is a country in West Asia that occupies the bulk of the Arabian Peninsula.
+Senegal	Senegal	Q1041	https://en.wikipedia.org/wiki/Senegal	Senegal, officially the Republic of Senegal, is the westernmost country of mainland West Africa, situated along the Atlantic Ocean coast.
+Serbia	Serbia	Q403	https://en.wikipedia.org/wiki/Serbia	Serbia, officially the Republic of Serbia, is a landlocked country in Southeastern and Central Europe.
+Seychelles	Seychelles	Q1042	https://en.wikipedia.org/wiki/Seychelles	Seychelles ( , ; French: [sɛʃɛl] or [seʃɛl]), officially the Republic of Seychelles (French: République des Seychelles; Seychellois Creole: Repiblik Sesel), is an archipelagic country consisting of 115 islands in the Indian Ocean.
+Sierra_Leone	Sierra Leone	Q1044	https://en.wikipedia.org/wiki/Sierra_Leone	Sierra Leone, officially the Republic of Sierra Leone, is a country on the west coast of West Africa.
+Singapore	Singapore	Q334	https://en.wikipedia.org/wiki/Singapore	Singapore, officially the Republic of Singapore, is an island country in Southeast Asia.
+Slovakia	Slovakia	Q214	https://en.wikipedia.org/wiki/Slovakia	Slovakia, officially the Slovak Republic, is a landlocked country in Central Europe.
+Slovenia	Slovenia	Q215	https://en.wikipedia.org/wiki/Slovenia	Slovenia, officially the Republic of Slovenia, is a country in Central Europe.
+Solomon_Islands	Solomon Islands	Q685	https://en.wikipedia.org/wiki/Solomon_Islands	Solomon Islands, also known simply as the Solomons, is an archipelagic country consisting of six major islands and over 1,000 smaller islands in Melanesia, Oceania, to the north-east of Australia.
+Somalia	Somalia	Q1045	https://en.wikipedia.org/wiki/Somalia	Somalia, officially the Federal Republic of Somalia, is the easternmost country in continental Africa.
+South_Africa	South Africa	Q258	https://en.wikipedia.org/wiki/South_Africa	South Africa, officially the Republic of South Africa (RSA), is the southernmost country in Africa.
+South_Korea	South Korea	Q884	https://en.wikipedia.org/wiki/South_Korea	South Korea, officially the Republic of Korea (ROK), is a country in East Asia.
+South_Sudan	South Sudan	Q958	https://en.wikipedia.org/wiki/South_Sudan	South Sudan (), officially the Republic of South Sudan, is a landlocked country in East Africa.
+Spain	Spain	Q29	https://en.wikipedia.org/wiki/Spain	Spain, officially the Kingdom of Spain, is a country in Southern and Western Europe with territories in North Africa.
+Sri_Lanka	Sri Lanka	Q854	https://en.wikipedia.org/wiki/Sri_Lanka	Sri Lanka, officially the Democratic Socialist Republic of Sri Lanka, formerly known as Ceylon, is an island country in South Asia.
+Sudan	Sudan	Q1049	https://en.wikipedia.org/wiki/Sudan	Sudan, officially the Republic of the Sudan, is a country in Northeast Africa.
+Suriname	Suriname	Q730	https://en.wikipedia.org/wiki/Suriname	Suriname,  officially the Republic of Suriname, is a country on the northern coast of South America, also considered as part of the Caribbean and the West Indies.
+Sweden	Sweden	Q34	https://en.wikipedia.org/wiki/Sweden	Sweden, formally the Kingdom of Sweden, is a Nordic country located on the Scandinavian Peninsula in Northern Europe.
+Switzerland	Switzerland	Q39	https://en.wikipedia.org/wiki/Switzerland	Switzerland, officially the Swiss Confederation, is a landlocked country located at the intersection of Central, Western, and Southern Europe.
+Syria	Syria	Q858	https://en.wikipedia.org/wiki/Syria	Syria, officially the Syrian Arab Republic, is a country in West Asia located in the Eastern Mediterranean and the Levant.
+São_Tomé_and_Príncipe	São Tomé and Príncipe	Q1039	https://en.wikipedia.org/wiki/São_Tomé_and_Príncipe	São Tomé and Príncipe, officially the Democratic Republic of Sao Tome and Principe, is an island country in the Gulf of Guinea, off the western equatorial coast of Central Africa.
+Tajikistan	Tajikistan	Q863	https://en.wikipedia.org/wiki/Tajikistan	Tajikistan, officially the Republic of Tajikistan, is a landlocked country located in Central Asia.
+Tanzania	Tanzania	Q924	https://en.wikipedia.org/wiki/Tanzania	Tanzania, officially the United Republic of Tanzania, is a country in East Africa within the African Great Lakes region.
+Thailand	Thailand	Q869	https://en.wikipedia.org/wiki/Thailand	Thailand, officially the Kingdom of Thailand, and formerly known as Siam, is a country located in Mainland Southeast Asia.
+The_Bahamas	The Bahamas	Q778	https://en.wikipedia.org/wiki/The_Bahamas	The Bahamas, officially the Commonwealth of The Bahamas, is an archipelagic country in the Caribbean located within the Lucayan Archipelago in the Atlantic Ocean.
+The_Gambia	The Gambia	Q1005	https://en.wikipedia.org/wiki/The_Gambia	The Gambia, officially the Republic of The Gambia, is a country in West Africa.
+Timor-Leste	Timor-Leste	Q574	https://en.wikipedia.org/wiki/Timor-Leste	Timor-Leste, also known as East Timor, officially the Democratic Republic of Timor-Leste, is a country in Southeast Asia.
+Togo	Togo	Q945	https://en.wikipedia.org/wiki/Togo	Togo, officially the Togolese Republic, is a country located in West Africa.
+Tonga	Tonga	Q678	https://en.wikipedia.org/wiki/Tonga	Tonga, officially known as the Kingdom of Tonga, is an island country in Polynesia, part of Oceania.
+Trinidad_and_Tobago	Trinidad and Tobago	Q754	https://en.wikipedia.org/wiki/Trinidad_and_Tobago	Trinidad and Tobago, officially the Republic of Trinidad and Tobago, is the southernmost archipelagic country in the Caribbean, comprising the main islands of Trinidad and Tobago, along with several smaller islets.
+Tunisia	Tunisia	Q948	https://en.wikipedia.org/wiki/Tunisia	Tunisia, officially the Republic of Tunisia, is a country in the Maghreb region of North Africa.
+Turkey	Turkey	Q43	https://en.wikipedia.org/wiki/Turkey	Turkey, officially the Republic of Türkiye, is a country mainly located in Anatolia in West Asia, with a smaller part called East Thrace in Southeast Europe.
+Turkmenistan	Turkmenistan	Q874	https://en.wikipedia.org/wiki/Turkmenistan	Turkmenistan is a landlocked country in Central Asia, bordered by Kazakhstan and Uzbekistan to the north, Afghanistan to the southeast, Iran to the south and southwest, and the Caspian Sea to the west.
+Tuvalu	Tuvalu	Q672	https://en.wikipedia.org/wiki/Tuvalu	Tuvalu (  too-VAH-loo) is an archipelagic country in the Polynesian sub-region of Oceania in the Pacific Ocean, about midway between Hawaii and Australia.
+Uganda	Uganda	Q1036	https://en.wikipedia.org/wiki/Uganda	Uganda, officially the Republic of Uganda, is a landlocked country in East Africa.
+Ukraine	Ukraine	Q212	https://en.wikipedia.org/wiki/Ukraine	Ukraine is a country in Eastern Europe.
+United_Arab_Emirates	United Arab Emirates	Q878	https://en.wikipedia.org/wiki/United_Arab_Emirates	The United Arab Emirates (UAE), also known simply as the Emirates, is a country in West Asia, situated at the eastern end of the Arabian Peninsula.
+United_Kingdom	United Kingdom	Q145	https://en.wikipedia.org/wiki/United_Kingdom	The United Kingdom of Great Britain and Northern Ireland, commonly known as the United Kingdom (UK) or Britain, is a country in northwestern Europe, off the coast of the continental mainland.
+United_States	United States	Q30	https://en.wikipedia.org/wiki/United_States	The United States of America (USA), also known as the United States (U.S.) or America, is a country primarily located in North America.
+Uruguay	Uruguay	Q77	https://en.wikipedia.org/wiki/Uruguay	Uruguay, officially the Oriental Republic of Uruguay, is a country in southeastern South America.
+Uzbekistan	Uzbekistan	Q265	https://en.wikipedia.org/wiki/Uzbekistan	Uzbekistan, officially the Republic of Uzbekistan, is a sovereign, doubly landlocked country located in Central Asia.
+Vanuatu	Vanuatu	Q686	https://en.wikipedia.org/wiki/Vanuatu	Vanuatu, officially the Republic of Vanuatu (French: République de Vanuatu; Bislama: Ripablik blong Vanuatu), is an archipelagic country in Melanesia located in the South Pacific Ocean.
+Venezuela	Venezuela	Q717	https://en.wikipedia.org/wiki/Venezuela	Venezuela, officially the Bolivarian Republic of Venezuela, is a country on the northern coast of South America, consisting of a continental landmass and various islands and islets in the Caribbean Sea.
+Vietnam	Vietnam	Q881	https://en.wikipedia.org/wiki/Vietnam	Vietnam, officially the Socialist Republic of Viet Nam (SRV), is a country at the eastern edge of Mainland Southeast Asia.
+Yemen	Yemen	Q805	https://en.wikipedia.org/wiki/Yemen	Yemen, officially the Republic of Yemen, is a country in West Asia.
+Zambia	Zambia	Q953	https://en.wikipedia.org/wiki/Zambia	Zambia (), officially the Republic of Zambia, is a landlocked country in Southern Africa.
+Zimbabwe	Zimbabwe	Q954	https://en.wikipedia.org/wiki/Zimbabwe	Zimbabwe, officially the Republic of Zimbabwe, is a landlocked country in Southeast Africa, between the Zambezi and Limpopo River, bordered by South Africa to the south, Botswana to the southwest, Zambia to the north, and Mozambique to the east.
