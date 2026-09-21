@@ -508,9 +508,9 @@
         <div>
           <div class="toggle-label">Edges shown</div>
           <div class="toggle-group" role="group" aria-label="Edge direction filter">
-            <button type="button" data-mode="out" title="Only this country's outgoing links">Out</button>
+            <button type="button" data-mode="out" class="active" title="Only this country's outgoing links">Out</button>
             <button type="button" data-mode="in" title="Only links pointing to this country">In</button>
-            <button type="button" data-mode="both" class="active" title="Only mutual links -- linked both ways">Both</button>
+            <button type="button" data-mode="both" title="Only mutual links -- linked both ways">Both</button>
             <button type="button" data-mode="all" title="Every link touching this country, either direction">All</button>
           </div>
         </div>
@@ -524,11 +524,11 @@
         <div>
           <div class="toggle-label">Colour nodes by</div>
           <div class="toggle-group" role="group" aria-label="Node colour mode">
-            <button type="button" data-color-mode="degree" class="active" title="Uniform colour, sized by degree">Degree</button>
-            <button type="button" data-color-mode="continent" title="Colour by continent">Continent</button>
+            <button type="button" data-color-mode="none" title="Uniform colour, no continent grouping">No colour</button>
+            <button type="button" data-color-mode="continent" class="active" title="Colour by continent">Continent</button>
           </div>
         </div>
-        <div class="legend" id="continent-legend" hidden></div>
+        <div class="legend" id="continent-legend"></div>
       </div>
 
       <div class="overlay-panel zoom-controls">
@@ -1031,7 +1031,7 @@
   });
 
   // ------------------------------------------------------------- state ----
-  let mode = "both";
+  let mode = "out";
   let hoverNode = null;
   let pinnedNode = null;
   let viewMode = "map"; // "map" | "network" -- see the network-view section below
@@ -1235,9 +1235,9 @@
     "Oceania": "#C6A664",
     "South America": "#D1495B",
   };
-  const DEGREE_COLOR = "#1F3A5F";
+  const UNCOLORED_NODE_COLOR = "#1F3A5F";
 
-  let colorMode = "degree";
+  let colorMode = "continent";
   let networkInitialized = false;
   let netCanvas, netCtx, netDPR, netW, netH;
   let netSimulation, netEdges, netNeighbors, netRadiusScale;
@@ -1257,7 +1257,7 @@
     if (colorMode === "continent") {
       return CONTINENT_COLORS[CONTINENT_BY_ID[nodeId]] || "#8892a6";
     }
-    return DEGREE_COLOR;
+    return UNCOLORED_NODE_COLOR;
   }
 
   function requestNetRender() {

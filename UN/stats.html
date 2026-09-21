@@ -488,15 +488,6 @@
       c.total_degree, intFmt
     ),
     leaderboardCard(
-      "Harmonic Centrality",
-      "Used in place of plain closeness centrality: closeness zeroes out for any node that " +
-      "can't reach every other node, which happens constantly on a directed, imperfectly-connected " +
-      "graph like this one. Harmonic centrality sums 1&frasl;distance over every other node instead, " +
-      "so an unreachable node just contributes 0 rather than breaking the whole score. Computed on " +
-      "the directed graph.",
-      c.harmonic, decFmt
-    ),
-    leaderboardCard(
       "Betweenness Centrality",
       "Which countries sit on the most shortest paths between other pairs of countries &mdash; " +
       "removing a high-betweenness node would fragment a lot of shortest routes through the network. " +

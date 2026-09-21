@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-21T18:49:21+00:00",
+  "generated_at": "2026-09-21T20:01:47+00:00",
   "overview": {
     "n_nodes": 193,
     "n_edges": 2199,
@@ -259,83 +259,6 @@
         "node_id": "South_Africa",
         "name": "South Africa",
         "value": 37
-      }
-    ],
-    "harmonic": [
-      {
-        "node_id": "United_States",
-        "name": "United States",
-        "value": 129.33
-      },
-      {
-        "node_id": "United_Kingdom",
-        "name": "United Kingdom",
-        "value": 127.83
-      },
-      {
-        "node_id": "China",
-        "name": "China",
-        "value": 121.5
-      },
-      {
-        "node_id": "India",
-        "name": "India",
-        "value": 106.5
-      },
-      {
-        "node_id": "Russia",
-        "name": "Russia",
-        "value": 106.0
-      },
-      {
-        "node_id": "France",
-        "name": "France",
-        "value": 104.83
-      },
-      {
-        "node_id": "Germany",
-        "name": "Germany",
-        "value": 103.5
-      },
-      {
-        "node_id": "Spain",
-        "name": "Spain",
-        "value": 101.83
-      },
-      {
-        "node_id": "Philippines",
-        "name": "Philippines",
-        "value": 101.5
-      },
-      {
-        "node_id": "Turkey",
-        "name": "Turkey",
-        "value": 100.0
-      },
-      {
-        "node_id": "Italy",
-        "name": "Italy",
-        "value": 98.5
-      },
-      {
-        "node_id": "Iraq",
-        "name": "Iraq",
-        "value": 97.5
-      },
-      {
-        "node_id": "Iran",
-        "name": "Iran",
-        "value": 97.5
-      },
-      {
-        "node_id": "Australia",
-        "name": "Australia",
-        "value": 96.42
-      },
-      {
-        "node_id": "Brazil",
-        "name": "Brazil",
-        "value": 95.83
       }
     ],
     "betweenness": [
@@ -598,6 +521,33 @@
       "n_max_cliques": 5,
       "examples": [
         [
+          "Fiji",
+          "Kiribati",
+          "New Zealand",
+          "Solomon Islands",
+          "Tonga",
+          "Tuvalu",
+          "United Kingdom"
+        ],
+        [
+          "Australia",
+          "Fiji",
+          "Kiribati",
+          "New Zealand",
+          "Solomon Islands",
+          "Tuvalu",
+          "United Kingdom"
+        ],
+        [
+          "Fiji",
+          "Kiribati",
+          "Solomon Islands",
+          "Tonga",
+          "Tuvalu",
+          "United Kingdom",
+          "Vanuatu"
+        ],
+        [
           "Egypt",
           "Iraq",
           "Israel",
@@ -614,33 +564,6 @@
           "Saudi Arabia",
           "Sudan",
           "United Arab Emirates"
-        ],
-        [
-          "Fiji",
-          "Kiribati",
-          "Solomon Islands",
-          "Tonga",
-          "Tuvalu",
-          "United Kingdom",
-          "Vanuatu"
-        ],
-        [
-          "Australia",
-          "Fiji",
-          "Kiribati",
-          "New Zealand",
-          "Solomon Islands",
-          "Tuvalu",
-          "United Kingdom"
-        ],
-        [
-          "Fiji",
-          "Kiribati",
-          "New Zealand",
-          "Solomon Islands",
-          "Tonga",
-          "Tuvalu",
-          "United Kingdom"
         ]
       ],
       "n_examples_shown": 5

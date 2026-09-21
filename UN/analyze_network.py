@@ -7,8 +7,7 @@ stats page in sync.
 
 Methodology mirrors the course's own week 3 approach (centrality measures,
 undirected-giant-component treatment for path/betweenness/eigenvector,
-harmonic centrality in place of plain closeness for a directed/imperfectly-
-connected graph, PageRank with alpha=0.85 on the directed graph) -- see
+PageRank with alpha=0.85 on the directed graph) -- see
 https://sunelehmann.com/socialgraphs2026-web/weeks/week3.html
 Deliberately out of scope, per that same methodology: degree assortativity.
 
@@ -193,9 +192,6 @@ def main():
     out_degree = dict(G.out_degree())
     total_degree = {n: in_degree[n] + out_degree[n] for n in G.nodes()}
 
-    print("Computing harmonic centrality (directed, on the full graph)...")
-    harmonic = nx.harmonic_centrality(G)
-
     print("Computing betweenness centrality (undirected giant component)...")
     betweenness = nx.betweenness_centrality(Gu_giant)
 
@@ -218,7 +214,6 @@ def main():
         "in_degree": top_n_from_dict(in_degree, name_by_id),
         "out_degree": top_n_from_dict(out_degree, name_by_id),
         "total_degree": top_n_from_dict(total_degree, name_by_id),
-        "harmonic": top_n_from_dict(harmonic, name_by_id, decimals=2),
         "betweenness": top_n_from_dict(betweenness, name_by_id, decimals=4),
         "eigenvector": top_n_from_dict(eigenvector, name_by_id, decimals=4),
         "pagerank": top_n_from_dict(pagerank, name_by_id, decimals=4),
