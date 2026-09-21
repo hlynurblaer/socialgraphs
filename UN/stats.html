@@ -106,6 +106,21 @@
   }
   p.section-note strong { color: var(--text-body); }
 
+  p.analysis {
+    font-size: 13.5px;
+    color: var(--text-body);
+    line-height: 1.65;
+    margin: 18px 0 0;
+    padding: 14px 16px;
+    background: var(--panel-bg);
+    border-left: 3px solid var(--un-blue);
+    border-radius: 0 8px 8px 0;
+    max-width: 760px;
+    box-shadow: 0 2px 10px rgba(31,58,95,0.06);
+  }
+  p.analysis + p.analysis { margin-top: 10px; }
+  p.analysis strong { color: var(--un-navy); }
+
   /* ---------- overview / paths stat cards ---------- */
   .stat-grid {
     display: grid;
@@ -306,6 +321,26 @@
         the edge list changes to refresh these numbers.
       </p>
       <div class="stat-grid" id="overview-grid"></div>
+      <p class="analysis">
+        Every one of the 193 member states reaches every other, ignoring direction &mdash; no isolates,
+        no small clique sitting off on its own, unlike the Marvel network from week 1 (17 disconnected
+        characters and a self-contained 9-node clique). Follow the arrows, though, and the picture
+        changes: only 190 of 193 countries form a single strongly connected component, where every
+        country can reach every other by following outgoing links <em>and</em> be reached in turn. The
+        remaining three sit just outside that core &mdash; depending on which direction their handful of
+        connecting links point, they can reach the core without being reachable from it, or the
+        reverse, but not both. A small, concrete reason the course draws a hard line between weak and
+        strong connectivity for directed graphs.
+      </p>
+      <p class="analysis">
+        Reciprocity is the more surprising number here. At 5.9% density, if links were placed
+        independently at random, you'd expect roughly a 5.9% chance that any given link's reverse also
+        exists &mdash; density and baseline reciprocity should track each other under pure chance. The
+        actual reciprocity is 43.6%, about seven times that baseline: when one country's article links
+        to another, there's nearly even odds the link runs back the other way too. Wikipedia's link
+        structure isn't random here &mdash; it's tracking real, mostly-mutual relationships (shared
+        borders, colonial history, regional blocs), not one-off mentions.
+      </p>
     </section>
 
     <section id="section-paths">
@@ -317,6 +352,16 @@
         to measure.
       </p>
       <div class="stat-grid" id="paths-grid"></div>
+      <p class="analysis">
+        An average path length of 2.19 makes this a small world by any definition: pick two countries
+        at random and there's typically only one other country's worth of separation between their
+        Wikipedia articles. The diameter of 4 means even the two <em>most</em> distant countries in the
+        network are never more than four hops apart, and a radius of 2 &mdash; with the United Kingdom
+        and United States sitting at the center &mdash; means both of them are within two hops of
+        literally every other member state. That's an unusually tight bound for 193 nodes, and it lines
+        up with the centrality leaderboards below: the same two countries top or near-top nearly every
+        measure of importance in the network.
+      </p>
     </section>
 
     <section id="section-centrality">
@@ -326,6 +371,19 @@
         Each measure answers a different question about a country's position in the network.
       </p>
       <div class="leaderboard-grid" id="centrality-grid"></div>
+      <p class="analysis">
+        The same handful of great powers &mdash; the United States, United Kingdom, China, Russia,
+        Germany and France &mdash; dominate every centrality measure except one. They're the most
+        linked-to (in-degree), the best-connected to other well-connected countries (eigenvector), the
+        ones other shortest paths most often pass through (betweenness &mdash; where the UK actually
+        edges out the US, 0.125 to 0.102), and the ones Wikipedia's own link structure treats as most
+        authoritative (PageRank). Out-degree flips the picture entirely: the busiest linkers aren't
+        world powers at all, they're smaller countries like Lithuania, São Tomé and Príncipe and
+        Kazakhstan, whose own articles simply name a lot of other countries (regional neighbors,
+        colonial history, diplomatic relations) without being nearly as often cited back. It's the same
+        fame-versus-chattiness split week 1 found in the Marvel network, just with countries standing
+        in for superheroes.
+      </p>
     </section>
 
     <section id="section-cliques">
@@ -336,6 +394,19 @@
         different questions and give very different answers.
       </p>
       <div class="clique-grid" id="clique-grid"></div>
+      <p class="analysis">
+        Both maximum all-links cliques are regionally coherent rather than a random assortment of
+        well-connected countries: one is a Pacific/Anglosphere cluster built around Fiji, Kiribati,
+        Solomon Islands, Tonga and Tuvalu alongside their historical ties to the United Kingdom,
+        Australia and New Zealand; the other is a Middle Eastern cluster of Iraq, Israel, Lebanon,
+        Saudi Arabia, Sudan and the United Arab Emirates, with either Egypt or Iran filling the seventh
+        seat. Tighten the requirement to mutual-only links and the clique number drops from 7 to 5 &mdash;
+        and only the five Pacific microstates (Fiji, Solomon Islands, Tonga, Tuvalu, Vanuatu) survive
+        intact. The UK, Australia and New Zealand all drop out: their articles get cited by those
+        island nations, but the reverse links aren't dense enough to keep them in a fully reciprocal
+        clique. What's left is a small, tight regional bloc that genuinely writes about each other, not
+        just a set of countries that happen to share a common reference point.
+      </p>
     </section>
 
   </div>
