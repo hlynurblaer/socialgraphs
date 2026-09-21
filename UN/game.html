@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>United Nations Member States — Wikipedia Path Game</title>
+<style>
+  :root {
+    --un-blue: #009EDB;
+    --un-blue-dim: rgba(0, 158, 219, 0.28);
+    --un-navy: #1F3A5F;
+    --un-gold: #C6A664;
+    --un-gold-dim: rgba(198, 166, 100, 0.32);
+    --bg-page: #F3F7FA;
+    --map-ocean: #E7F1F7;
+    --map-land: #FBFDFE;
+    --map-land-stroke: #9FBFD4;
+    --map-land-stroke-dim: #C9DAE6;
+    --text-body: #24405C;
+    --text-muted: #5B7590;
+    --panel-bg: #FFFFFF;
+    --shadow: 0 8px 28px rgba(31, 58, 95, 0.18);
+    --overlay-bg: rgba(255, 255, 255, 0.94);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: var(--bg-page);
+    color: var(--text-body);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  }
+
+  .app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+
+  /* ---------- header (matches un.html) ---------- */
+  .app-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 24px;
+    background: var(--un-navy);
+    color: #fff;
+    flex: 0 0 auto;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .header-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .back-link {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.78);
+    text-decoration: none;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 6px;
+    padding: 6px 12px;
+    white-space: nowrap;
+  }
+  .back-link:hover { color: #fff; border-color: rgba(255,255,255,0.6); }
+
+  .stats-link {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--un-navy);
+    text-decoration: none;
+    background: var(--un-gold);
+    border: 1px solid var(--un-gold);
+    border-radius: 6px;
+    padding: 6px 12px;
+    white-space: nowrap;
+  }
+  .stats-link:hover { background: #d4b578; }
+
+  .emblem { flex: 0 0 auto; }
+  .emblem .land { fill: #cfe6f2; }
+  .emblem .leaf { fill: var(--un-gold); opacity: 0.95; }
+  .emblem .ring { fill: none; stroke: rgba(255,255,255,0.35); stroke-width: 0.6; }
+
+  .titles h1 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+  }
+  .titles p {
+    margin: 2px 0 0;
+    font-size: 12px;
+    color: rgba(255,255,255,0.72);
+    letter-spacing: 0.3px;
+  }
+
+  /* ---------- main / map area (matches un.html) ---------- */
+  .map-wrap {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  #map-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  #map {
+    width: 100%;
+    height: 100%;
+    display: block;
+    background: var(--map-ocean);
+  }
+
+  .country {
+    fill: var(--map-land);
+    stroke: var(--map-land-stroke);
+    stroke-width: 0.5px;
+    vector-effect: non-scaling-stroke;
+    transition: fill 0.15s ease, stroke 0.15s ease, opacity 0.2s ease;
+  }
+  .country.member { cursor: pointer; }
+  .country.dim {
+    opacity: 0.45;
+    stroke: var(--map-land-stroke-dim);
+  }
+  .country.current {
+    fill: #EAF6FD;
+    stroke: var(--un-blue);
+    stroke-width: 1.3px;
+  }
+  .country.target {
+    fill: #FBF4E4;
+    stroke: var(--un-gold);
+    stroke-width: 1.3px;
+  }
+
+  .marker {
+    fill: var(--un-navy);
+    stroke: #fff;
+    stroke-width: 0.8px;
+    vector-effect: non-scaling-stroke;
+    cursor: default;
+    transition: opacity 0.2s ease, r 0.15s ease, fill 0.15s ease;
+  }
+  .marker.dim { opacity: 0.3; }
+  .marker.reachable { cursor: pointer; opacity: 1; }
+  .marker.current {
+    fill: var(--un-blue);
+    stroke: #fff;
+    stroke-width: 1.6px;
+    cursor: default;
+  }
+  .marker.target {
+    fill: var(--un-gold);
+    stroke: #fff;
+    stroke-width: 1.6px;
+    cursor: pointer;
+  }
+
+  .marker.invalid-flash {
+    animation: invalidFlash 0.4s ease;
+  }
+  @keyframes invalidFlash {
+    0%   { fill: #c0392b; }
+    100% { fill: var(--un-navy); }
+  }
+  .country.invalid-flash {
+    animation: invalidFlashCountry 0.4s ease;
+  }
+  @keyframes invalidFlashCountry {
+    0%   { fill: #f6d5d0; stroke: #c0392b; }
+    100% { fill: var(--map-land); stroke: var(--map-land-stroke); }
+  }
+
+  .edge {
+    fill: none;
+    vector-effect: non-scaling-stroke;
+    pointer-events: none;
+  }
+  .edge.out { stroke: var(--un-blue); }
+
+  .target-star {
+    fill: var(--un-gold);
+    stroke: #fff;
+    stroke-width: 0.6px;
+    paint-order: stroke;
+    pointer-events: none;
+    font-weight: 700;
+  }
+  .start-ring {
+    fill: none;
+    stroke: var(--un-navy);
+    stroke-dasharray: 2.4 2;
+    vector-effect: non-scaling-stroke;
+    opacity: 0.55;
+    pointer-events: none;
+  }
+
+  /* ---------- floating overlays (matches un.html) ---------- */
+  .overlay-panel {
+    position: absolute;
+    background: var(--overlay-bg);
+    border: 1px solid rgba(31,58,95,0.12);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(31,58,95,0.12);
+    padding: 10px 12px;
+    font-size: 12.5px;
+    color: var(--text-body);
+  }
+
+  .zoom-controls {
+    top: 14px;
+    right: 14px;
+    display: flex;
+    flex-direction: column;
+    padding: 4px;
+    gap: 2px;
+  }
+  .zoom-controls button {
+    appearance: none;
+    border: 1px solid var(--un-navy);
+    background: #fff;
+    color: var(--un-navy);
+    font: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    width: 28px;
+    height: 28px;
+    line-height: 1;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .zoom-controls button:hover { background: #eef5fa; }
+  .zoom-controls button:active { background: var(--un-navy); color: #fff; }
+  .zoom-controls #zoom-reset { font-size: 13px; }
+
+  #error-banner {
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #fff5f5;
+    border: 1px solid #e3a1a1;
+    color: #8a2b2b;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    max-width: 560px;
+    box-shadow: var(--shadow);
+  }
+
+  /* ---------- game-specific overlays ---------- */
+  .game-panel {
+    top: 14px;
+    left: 14px;
+    width: 240px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .status-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .status-dot {
+    width: 10px; height: 10px; border-radius: 50%; flex: 0 0 auto;
+    border: 1px solid rgba(31,58,95,0.25);
+  }
+  .status-dot.current { background: var(--un-blue); }
+  .status-dot.target { background: var(--un-gold); }
+  .status-label {
+    font-size: 9.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    font-weight: 600;
+    display: block;
+  }
+  .status-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--un-navy);
+  }
+
+  .step-counter {
+    font-size: 12px;
+    color: var(--text-muted);
+    border-top: 1px solid rgba(31,58,95,0.1);
+    padding-top: 8px;
+  }
+  .step-counter strong { color: var(--un-navy); font-size: 15px; }
+
+  .restart-btn {
+    appearance: none;
+    border: 1px solid var(--un-navy);
+    background: #fff;
+    color: var(--un-navy);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 7px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .restart-btn:hover { background: #eef5fa; }
+
+  .route-panel {
+    bottom: 14px;
+    left: 14px;
+    max-width: 360px;
+    max-height: 160px;
+    overflow-y: auto;
+  }
+  .route-panel .toggle-label {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 6px;
+    display: block;
+  }
+  .route-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    font-size: 12.5px;
+    color: var(--text-body);
+    line-height: 1.5;
+  }
+  .route-list .hop { white-space: nowrap; }
+  .route-list .hop.is-current { color: var(--un-blue); font-weight: 700; }
+  .route-list .arrow { color: var(--text-muted); }
+
+  .hint-box {
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 420px;
+    color: var(--text-muted);
+    line-height: 1.4;
+    text-align: center;
+  }
+  .hint-box strong { color: var(--un-navy); }
+
+  /* ---------- win modal ---------- */
+  .win-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(31, 58, 95, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+  }
+  .win-overlay[hidden] { display: none; }
+
+  .win-modal {
+    background: var(--panel-bg);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    padding: 28px 30px;
+    max-width: 440px;
+    width: 90vw;
+    text-align: center;
+    border-top: 4px solid var(--un-gold);
+  }
+  .win-modal h2 {
+    margin: 0 0 6px;
+    color: var(--un-navy);
+    font-size: 22px;
+  }
+  .win-modal .win-sub {
+    margin: 0 0 18px;
+    color: var(--text-muted);
+    font-size: 13.5px;
+  }
+  .win-stats {
+    display: flex;
+    justify-content: center;
+    gap: 22px;
+    margin-bottom: 16px;
+  }
+  .win-stats .win-stat-cell { text-align: center; }
+  .win-stats .win-stat-value {
+    display: block;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--un-navy);
+  }
+  .win-stats .win-stat-label {
+    display: block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+  .win-verdict {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--un-navy);
+    background: #F6FAFC;
+    border-radius: 8px;
+    padding: 8px 10px;
+    margin-bottom: 16px;
+  }
+  .win-path-label {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .win-path {
+    font-size: 12.5px;
+    color: var(--text-body);
+    line-height: 1.6;
+    margin-bottom: 22px;
+    word-break: break-word;
+  }
+  .win-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+  .win-buttons button, .win-buttons a {
+    appearance: none;
+    border: none;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 18px;
+    border-radius: 7px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .win-play-again { background: var(--un-blue); color: #fff; }
+  .win-play-again:hover { background: #0089c0; }
+  .win-back-to-map { background: #fff; color: var(--un-navy); border: 1px solid var(--un-navy) !important; }
+  .win-back-to-map:hover { background: #eef5fa; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="app-header">
+    <div class="brand">
+      <svg class="emblem" width="44" height="44" viewBox="0 0 64 64" aria-hidden="true">
+        <circle class="ring" cx="32" cy="30" r="27" />
+        <g id="emblem-land"></g>
+        <ellipse cx="26.8" cy="53.3" rx="4.6" ry="2.0" class="leaf" transform="rotate(165 26.8 53.3)" />
+        <ellipse cx="21.2" cy="52.6" rx="4.3" ry="1.9" class="leaf" transform="rotate(150 21.2 52.6)" />
+        <ellipse cx="15.7" cy="50.3" rx="4.0" ry="1.8" class="leaf" transform="rotate(135 15.7 50.3)" />
+        <ellipse cx="10.8" cy="46.2" rx="3.7" ry="1.7" class="leaf" transform="rotate(120 10.8 46.2)" />
+        <ellipse cx="6.9"  cy="40.7" rx="3.4" ry="1.6" class="leaf" transform="rotate(105 6.9 40.7)" />
+        <ellipse cx="4.5"  cy="34.0" rx="3.1" ry="1.5" class="leaf" transform="rotate(90 4.5 34.0)" />
+        <ellipse cx="4.0"  cy="26.5" rx="2.8" ry="1.4" class="leaf" transform="rotate(75 4.0 26.5)" />
+        <ellipse cx="37.2" cy="53.3" rx="4.6" ry="2.0" class="leaf" transform="rotate(15 37.2 53.3)" />
+        <ellipse cx="42.8" cy="52.6" rx="4.3" ry="1.9" class="leaf" transform="rotate(30 42.8 52.6)" />
+        <ellipse cx="48.3" cy="50.3" rx="4.0" ry="1.8" class="leaf" transform="rotate(45 48.3 50.3)" />
+        <ellipse cx="53.2" cy="46.2" rx="3.7" ry="1.7" class="leaf" transform="rotate(60 53.2 46.2)" />
+        <ellipse cx="57.1" cy="40.7" rx="3.4" ry="1.6" class="leaf" transform="rotate(75 57.1 40.7)" />
+        <ellipse cx="59.5" cy="34.0" rx="3.1" ry="1.5" class="leaf" transform="rotate(90 59.5 34.0)" />
+        <ellipse cx="60.0" cy="26.5" rx="2.8" ry="1.4" class="leaf" transform="rotate(105 60.0 26.5)" />
+      </svg>
+      <div class="titles">
+        <h1>United Nations Member States</h1>
+        <p>Wikipedia Path Game</p>
+      </div>
+      <div class="header-nav">
+        <a class="stats-link" href="stats.html">Statistics</a>
+      </div>
+    </div>
+    <a class="back-link" href="un.html">&larr; Back to Map</a>
+  </header>
+
+  <div class="map-wrap">
+    <div id="map-container">
+      <svg id="map" viewBox="0 0 1060 520" preserveAspectRatio="xMidYMid meet"></svg>
+
+      <div class="overlay-panel game-panel">
+        <div class="status-row">
+          <span class="status-dot current"></span>
+          <div>
+            <span class="status-label">Currently at</span>
+            <span class="status-name" id="current-name">—</span>
+          </div>
+        </div>
+        <div class="status-row">
+          <span class="status-dot target"></span>
+          <div>
+            <span class="status-label">Reach</span>
+            <span class="status-name" id="target-name">—</span>
+          </div>
+        </div>
+        <div class="step-counter">Steps taken: <strong id="step-count">0</strong></div>
+        <button type="button" class="restart-btn" id="restart-btn">&#8634; Restart (new countries)</button>
+      </div>
+
+      <div class="overlay-panel zoom-controls">
+        <button type="button" id="zoom-in" aria-label="Zoom in" title="Zoom in">+</button>
+        <button type="button" id="zoom-out" aria-label="Zoom out" title="Zoom out">&minus;</button>
+        <button type="button" id="zoom-reset" aria-label="Reset view" title="Reset view">&#8634;</button>
+      </div>
+
+      <div class="overlay-panel hint-box">
+        <strong>Click</strong> a highlighted country to move there, following that Wikipedia article's outgoing links, until you reach the target &mdash; <strong>scroll</strong> or +/&minus; to zoom, <strong>drag</strong> to pan.
+      </div>
+
+      <div class="overlay-panel route-panel">
+        <span class="toggle-label">Route so far</span>
+        <div class="route-list" id="route-list"></div>
+      </div>
+
+      <div id="error-banner" hidden></div>
+
+      <div class="win-overlay" id="win-overlay" hidden>
+        <div class="win-modal">
+          <h2>You made it! &#127881;</h2>
+          <p class="win-sub" id="win-sub">From <span id="win-start-name"></span> to <span id="win-target-name"></span></p>
+          <div class="win-stats">
+            <div class="win-stat-cell">
+              <span class="win-stat-value" id="win-steps">0</span>
+              <span class="win-stat-label">Your steps</span>
+            </div>
+            <div class="win-stat-cell">
+              <span class="win-stat-value" id="win-optimal">0</span>
+              <span class="win-stat-label">Shortest possible</span>
+            </div>
+          </div>
+          <div class="win-verdict" id="win-verdict"></div>
+          <div class="win-path-label">The shortest possible route</div>
+          <div class="win-path" id="win-path"></div>
+          <div class="win-buttons">
+            <button type="button" class="win-play-again" id="win-play-again">Play Again</button>
+            <a class="win-back-to-map" href="un.html">Back to Map</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+<script src="map-common.js"></script>
+<script>
+(async function () {
+  "use strict";
+
+  // ------------------------------------------------------------------
+  // This page loads data/un_nodes.tsv and data/un_edges.tsv at runtime
+  // with fetch(), which browsers refuse to do against a bare file://
+  // URL. Serve this folder over local HTTP, e.g. from the UN/ directory:
+  //   python3 -m http.server 8000
+  // then open http://localhost:8000/game.html -- or deploy as-is to
+  // GitHub Pages, which already serves over http(s).
+  //
+  // The map itself (data loading, coordinate resolution, base SVG,
+  // zoom/pan) comes from map-common.js, shared with un.html, so the
+  // hand-tuned parts of the map can't drift between the two pages.
+  // Everything below is specific to the game: picking a valid puzzle,
+  // BFS shortest-path, click-to-move, and the win screen.
+  // ------------------------------------------------------------------
+
+  let built;
+  try {
+    built = await MapCommon.buildMap({
+      svgSelector: "#map",
+      onZoomTick: () => { updateMarkerRadii(); positionOverlayIcons(); },
+    });
+  } catch (err) {
+    return; // MapCommon.buildMap already wrote the error banner
+  }
+
+  const {
+    nodes, nodesById, outAdjacency,
+    topoNameToNodeId, nodeScreenPos,
+    svg: mapSvg, gMarkers, countryPaths, markers, edgePaths,
+    markerRadiusFor, zoom,
+  } = built;
+
+  // -------------------------------------------------------- BFS + puzzle --
+  function bfsFrom(sourceId) {
+    const dist = new Map([[sourceId, 0]]);
+    const parent = new Map();
+    const queue = [sourceId];
+    let head = 0;
+    while (head < queue.length) {
+      const u = queue[head++];
+      const neighbors = outAdjacency.get(u);
+      if (!neighbors) continue;
+      neighbors.forEach(v => {
+        if (!dist.has(v)) {
+          dist.set(v, dist.get(u) + 1);
+          parent.set(v, u);
+          queue.push(v);
+        }
+      });
+    }
+    return { dist, parent };
+  }
+
+  function reconstructPath(parent, sourceId, targetId) {
+    const path = [targetId];
+    let cur = targetId;
+    while (cur !== sourceId) {
+      cur = parent.get(cur);
+      path.push(cur);
+    }
+    return path.reverse();
+  }
+
+  // Re-rolls a random start/target pair until the target is reachable from
+  // the start via out-edges only, with a shortest distance of at least 2 --
+  // rejecting direct edges (too trivial) and unreachable pairs. With 2220
+  // directed edges over 193 countries this resolves almost immediately, but
+  // a hard cap avoids ever hanging if the graph were sparser.
+  function pickPuzzle() {
+    const ids = nodes.map(n => n.node_id);
+    for (let attempt = 0; attempt < 1000; attempt++) {
+      const start = ids[Math.floor(Math.random() * ids.length)];
+      const target = ids[Math.floor(Math.random() * ids.length)];
+      if (start === target) continue;
+      const { dist, parent } = bfsFrom(start);
+      const d = dist.get(target);
+      if (d !== undefined && d >= 2) {
+        return { start, target, distance: d, path: reconstructPath(parent, start, target) };
+      }
+    }
+    return null;
+  }
+
+  // ------------------------------------------------------------- state ----
+  let startNode, targetNode, optimalDistance, optimalPath;
+  let currentNode, steps, route, gameOver;
+
+  function newGame() {
+    const puzzle = pickPuzzle();
+    if (!puzzle) {
+      MapCommon.showError(
+        "Could not find a valid pair of countries to play with after 1000 tries " +
+        "-- this shouldn't normally happen. Please reload the page to try again."
+      );
+      return false;
+    }
+    startNode = puzzle.start;
+    targetNode = puzzle.target;
+    optimalDistance = puzzle.distance;
+    optimalPath = puzzle.path;
+    currentNode = startNode;
+    steps = 0;
+    route = [startNode];
+    gameOver = false;
+    document.getElementById("win-overlay").hidden = true;
+    return true;
+  }
+
+  // ------------------------------------------------------------ overlays --
+  // The target star and start ring live in world-unit (zoomLayer) space, so
+  // like markers they visually inflate under zoom unless their size is
+  // compensated the same way markerRadiusFor compensates marker radius.
+  const STAR_BASE_SIZE = 15, RING_BASE_R = 9;
+
+  const targetStar = gMarkers.append("text")
+    .attr("class", "target-star")
+    .attr("text-anchor", "middle")
+    .attr("dominant-baseline", "central")
+    .text("★"); // ★
+
+  const startRing = gMarkers.append("circle")
+    .attr("class", "start-ring");
+
+  function positionOverlayIcons() {
+    const k = built.getZoomK();
+    const targetPos = nodeScreenPos(targetNode);
+    if (targetPos) {
+      targetStar
+        .attr("x", targetPos[0])
+        .attr("y", targetPos[1] - Math.max(6, 11 / k))
+        .attr("font-size", Math.max(8, STAR_BASE_SIZE / k));
+    }
+    const startPos = nodeScreenPos(startNode);
+    if (startPos) {
+      startRing
+        .attr("cx", startPos[0])
+        .attr("cy", startPos[1])
+        .attr("r", Math.max(5, RING_BASE_R / k))
+        .attr("stroke-width", Math.max(1, 1.4 / k));
+    }
+  }
+
+  function updateMarkerRadii() {
+    markers.attr("r", n => markerRadiusFor(n.node_id === currentNode || n.node_id === targetNode));
+  }
+
+  // ------------------------------------------------------------ rendering --
+  function render() {
+    const reachable = gameOver ? new Set() : (outAdjacency.get(currentNode) || new Set());
+
+    countryPaths
+      .classed("current", f => topoNameToNodeId.get(f.properties.name) === currentNode)
+      .classed("target", f => topoNameToNodeId.get(f.properties.name) === targetNode)
+      .classed("dim", f => {
+        const id = topoNameToNodeId.get(f.properties.name);
+        return id !== currentNode && id !== targetNode && !reachable.has(id);
+      });
+
+    markers
+      .classed("current", n => n.node_id === currentNode)
+      .classed("target", n => n.node_id === targetNode)
+      .classed("reachable", n => reachable.has(n.node_id))
+      .classed("dim", n => n.node_id !== currentNode && n.node_id !== targetNode && !reachable.has(n.node_id))
+      .attr("r", n => markerRadiusFor(n.node_id === currentNode || n.node_id === targetNode));
+
+    edgePaths
+      .classed("out", e => !gameOver && e.source === currentNode)
+      .style("display", e => (!gameOver && e.source === currentNode) ? null : "none")
+      .style("opacity", 0.85)
+      .style("stroke-width", 1.3);
+
+    positionOverlayIcons();
+
+    document.getElementById("current-name").textContent = nodesById.get(currentNode).name;
+    document.getElementById("target-name").textContent = nodesById.get(targetNode).name;
+    document.getElementById("step-count").textContent = steps;
+
+    const routeList = document.getElementById("route-list");
+    routeList.innerHTML = "";
+    route.forEach((id, i) => {
+      if (i > 0) {
+        const arrow = document.createElement("span");
+        arrow.className = "arrow";
+        arrow.textContent = "→";
+        routeList.appendChild(arrow);
+      }
+      const hop = document.createElement("span");
+      hop.className = "hop" + (i === route.length - 1 ? " is-current" : "");
+      hop.textContent = nodesById.get(id).name;
+      routeList.appendChild(hop);
+    });
+  }
+
+  function flashInvalid(nodeId) {
+    markers.filter(n => n.node_id === nodeId).classed("invalid-flash", true);
+    countryPaths.filter(f => topoNameToNodeId.get(f.properties.name) === nodeId).classed("invalid-flash", true);
+    setTimeout(() => {
+      markers.filter(n => n.node_id === nodeId).classed("invalid-flash", false);
+      countryPaths.filter(f => topoNameToNodeId.get(f.properties.name) === nodeId).classed("invalid-flash", false);
+    }, 400);
+  }
+
+  function attemptMove(nodeId) {
+    if (gameOver || !nodeId || nodeId === currentNode) return;
+    const reachable = outAdjacency.get(currentNode) || new Set();
+    if (!reachable.has(nodeId)) {
+      flashInvalid(nodeId);
+      return;
+    }
+    currentNode = nodeId;
+    steps += 1;
+    route.push(nodeId);
+    if (currentNode === targetNode) {
+      gameOver = true;
+      render();
+      showWinModal();
+    } else {
+      render();
+    }
+  }
+
+  function showWinModal() {
+    document.getElementById("win-start-name").textContent = nodesById.get(startNode).name;
+    document.getElementById("win-target-name").textContent = nodesById.get(targetNode).name;
+    document.getElementById("win-steps").textContent = steps;
+    document.getElementById("win-optimal").textContent = optimalDistance;
+
+    const verdict = document.getElementById("win-verdict");
+    if (steps === optimalDistance) {
+      verdict.textContent = "That's the shortest possible path!";
+    } else {
+      const diff = steps - optimalDistance;
+      verdict.textContent = `${diff} step${diff === 1 ? "" : "s"} more than the shortest possible route.`;
+    }
+
+    document.getElementById("win-path").textContent =
+      optimalPath.map(id => nodesById.get(id).name).join(" → ");
+
+    document.getElementById("win-overlay").hidden = false;
+  }
+
+  // -------------------------------------------------------------- events --
+  countryPaths.on("click", (event, f) => {
+    const id = topoNameToNodeId.get(f.properties.name);
+    if (id) { event.stopPropagation(); attemptMove(id); }
+  });
+  markers.on("click", (event, n) => { event.stopPropagation(); attemptMove(n.node_id); });
+
+  document.getElementById("restart-btn").addEventListener("click", (event) => {
+    event.stopPropagation();
+    if (newGame()) { svg_resetZoom(); render(); }
+  });
+  document.getElementById("win-play-again").addEventListener("click", (event) => {
+    event.stopPropagation();
+    if (newGame()) { svg_resetZoom(); render(); }
+  });
+
+  function svg_resetZoom() {
+    mapSvg.transition().duration(200).call(zoom.transform, d3.zoomIdentity);
+  }
+
+  if (newGame()) render();
+})();
+</script>
+</body>
+</html>

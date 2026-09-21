@@ -59,6 +59,25 @@
   }
   .back-link:hover { color: #fff; border-color: rgba(255,255,255,0.6); }
 
+  .header-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .stats-link {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--un-navy);
+    text-decoration: none;
+    background: var(--un-gold);
+    border: 1px solid var(--un-gold);
+    border-radius: 6px;
+    padding: 6px 12px;
+    white-space: nowrap;
+  }
+  .stats-link:hover { background: #d4b578; }
+
   .emblem { flex: 0 0 auto; }
   .emblem .land { fill: #cfe6f2; }
   .emblem .leaf { fill: var(--un-gold); opacity: 0.95; }
@@ -303,6 +322,9 @@
       <h1>Network Statistics</h1>
       <p>UN Member States &middot; Wikipedia Link Network</p>
     </div>
+    <div class="header-nav">
+      <a class="stats-link" href="game.html">Play</a>
+    </div>
   </div>
   <a class="back-link" href="un.html">&larr; Back to Map</a>
 </header>
@@ -325,12 +347,15 @@
         Every one of the 193 member states reaches every other, ignoring direction &mdash; no isolates,
         no small clique sitting off on its own, unlike the Marvel network from week 1 (17 disconnected
         characters and a self-contained 9-node clique). Follow the arrows, though, and the picture
-        changes: only 190 of 193 countries form a single strongly connected component, where every
-        country can reach every other by following outgoing links <em>and</em> be reached in turn. The
-        remaining three sit just outside that core &mdash; depending on which direction their handful of
-        connecting links point, they can reach the core without being reachable from it, or the
-        reverse, but not both. A small, concrete reason the course draws a hard line between weak and
-        strong connectivity for directed graphs.
+        changes: only 192 of 193 countries form a single strongly connected component, where every
+        country can reach every other by following outgoing links <em>and</em> be reached in turn.
+        <strong>Timor-Leste</strong> is the one exception, and the reason is stark: its article links
+        out to 7 other countries (Australia, Germany, Indonesia, Philippines, Portugal, Sweden, Yemen),
+        all of them inside the giant component, so Timor-Leste can reach the core just fine &mdash; but
+        its in-degree is <strong>zero</strong>. Not one of the other 192 countries' articles links back
+        to it, so nothing can reach Timor-Leste in return. A single missing direction is all it takes to
+        fall outside a strongly connected component, which is exactly why the course draws a hard line
+        between weak and strong connectivity for directed graphs.
       </p>
       <p class="analysis">
         Reciprocity is the more surprising number here. At 5.9% density, if links were placed
