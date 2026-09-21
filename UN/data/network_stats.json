@@ -1,0 +1,564 @@
+{
+  "generated_at": "2026-09-21T16:56:41+00:00",
+  "overview": {
+    "n_nodes": 193,
+    "n_edges": 2199,
+    "density": 0.0593,
+    "reciprocity": {
+      "reciprocated_edges": 958,
+      "total_edges": 2199,
+      "fraction": 0.4357
+    },
+    "weakly_connected": {
+      "giant_size": 193,
+      "n_components": 1,
+      "outside_giant": []
+    },
+    "strongly_connected": {
+      "giant_size": 190,
+      "n_components": 4
+    }
+  },
+  "paths": {
+    "n_nodes_in_component": 193,
+    "avg_path_length": 2.19,
+    "diameter": 4,
+    "radius": 2,
+    "center": [
+      "United Kingdom",
+      "United States"
+    ]
+  },
+  "centrality": {
+    "in_degree": [
+      {
+        "node_id": "United_States",
+        "name": "United States",
+        "value": 69
+      },
+      {
+        "node_id": "United_Kingdom",
+        "name": "United Kingdom",
+        "value": 67
+      },
+      {
+        "node_id": "China",
+        "name": "China",
+        "value": 56
+      },
+      {
+        "node_id": "India",
+        "name": "India",
+        "value": 33
+      },
+      {
+        "node_id": "France",
+        "name": "France",
+        "value": 32
+      },
+      {
+        "node_id": "Russia",
+        "name": "Russia",
+        "value": 31
+      },
+      {
+        "node_id": "Germany",
+        "name": "Germany",
+        "value": 30
+      },
+      {
+        "node_id": "Turkey",
+        "name": "Turkey",
+        "value": 27
+      },
+      {
+        "node_id": "Philippines",
+        "name": "Philippines",
+        "value": 26
+      },
+      {
+        "node_id": "Spain",
+        "name": "Spain",
+        "value": 26
+      },
+      {
+        "node_id": "Egypt",
+        "name": "Egypt",
+        "value": 25
+      },
+      {
+        "node_id": "Iraq",
+        "name": "Iraq",
+        "value": 25
+      },
+      {
+        "node_id": "Saudi_Arabia",
+        "name": "Saudi Arabia",
+        "value": 24
+      },
+      {
+        "node_id": "Iran",
+        "name": "Iran",
+        "value": 23
+      },
+      {
+        "node_id": "Australia",
+        "name": "Australia",
+        "value": 22
+      }
+    ],
+    "out_degree": [
+      {
+        "node_id": "Lithuania",
+        "name": "Lithuania",
+        "value": 26
+      },
+      {
+        "node_id": "São_Tomé_and_Príncipe",
+        "name": "São Tomé and Príncipe",
+        "value": 26
+      },
+      {
+        "node_id": "Kazakhstan",
+        "name": "Kazakhstan",
+        "value": 25
+      },
+      {
+        "node_id": "Tanzania",
+        "name": "Tanzania",
+        "value": 23
+      },
+      {
+        "node_id": "The_Gambia",
+        "name": "The Gambia",
+        "value": 22
+      },
+      {
+        "node_id": "Angola",
+        "name": "Angola",
+        "value": 21
+      },
+      {
+        "node_id": "Democratic_Republic_of_the_Congo",
+        "name": "Democratic Republic of the Congo",
+        "value": 21
+      },
+      {
+        "node_id": "Nicaragua",
+        "name": "Nicaragua",
+        "value": 21
+      },
+      {
+        "node_id": "Pakistan",
+        "name": "Pakistan",
+        "value": 21
+      },
+      {
+        "node_id": "Uzbekistan",
+        "name": "Uzbekistan",
+        "value": 21
+      },
+      {
+        "node_id": "Germany",
+        "name": "Germany",
+        "value": 20
+      },
+      {
+        "node_id": "Iran",
+        "name": "Iran",
+        "value": 20
+      },
+      {
+        "node_id": "Libya",
+        "name": "Libya",
+        "value": 20
+      },
+      {
+        "node_id": "Russia",
+        "name": "Russia",
+        "value": 20
+      },
+      {
+        "node_id": "Slovenia",
+        "name": "Slovenia",
+        "value": 20
+      }
+    ],
+    "total_degree": [
+      {
+        "node_id": "United_States",
+        "name": "United States",
+        "value": 80
+      },
+      {
+        "node_id": "United_Kingdom",
+        "name": "United Kingdom",
+        "value": 78
+      },
+      {
+        "node_id": "China",
+        "name": "China",
+        "value": 64
+      },
+      {
+        "node_id": "India",
+        "name": "India",
+        "value": 51
+      },
+      {
+        "node_id": "Russia",
+        "name": "Russia",
+        "value": 51
+      },
+      {
+        "node_id": "Germany",
+        "name": "Germany",
+        "value": 50
+      },
+      {
+        "node_id": "France",
+        "name": "France",
+        "value": 47
+      },
+      {
+        "node_id": "Iran",
+        "name": "Iran",
+        "value": 43
+      },
+      {
+        "node_id": "Saudi_Arabia",
+        "name": "Saudi Arabia",
+        "value": 43
+      },
+      {
+        "node_id": "Iraq",
+        "name": "Iraq",
+        "value": 42
+      },
+      {
+        "node_id": "Democratic_Republic_of_the_Congo",
+        "name": "Democratic Republic of the Congo",
+        "value": 40
+      },
+      {
+        "node_id": "Philippines",
+        "name": "Philippines",
+        "value": 39
+      },
+      {
+        "node_id": "Brazil",
+        "name": "Brazil",
+        "value": 37
+      },
+      {
+        "node_id": "Nigeria",
+        "name": "Nigeria",
+        "value": 37
+      },
+      {
+        "node_id": "South_Africa",
+        "name": "South Africa",
+        "value": 37
+      }
+    ],
+    "harmonic": [
+      {
+        "node_id": "United_States",
+        "name": "United States",
+        "value": 129.33
+      },
+      {
+        "node_id": "United_Kingdom",
+        "name": "United Kingdom",
+        "value": 127.83
+      },
+      {
+        "node_id": "China",
+        "name": "China",
+        "value": 121.5
+      },
+      {
+        "node_id": "India",
+        "name": "India",
+        "value": 106.5
+      },
+      {
+        "node_id": "Russia",
+        "name": "Russia",
+        "value": 106.0
+      },
+      {
+        "node_id": "France",
+        "name": "France",
+        "value": 104.83
+      },
+      {
+        "node_id": "Germany",
+        "name": "Germany",
+        "value": 103.5
+      },
+      {
+        "node_id": "Spain",
+        "name": "Spain",
+        "value": 101.83
+      },
+      {
+        "node_id": "Philippines",
+        "name": "Philippines",
+        "value": 101.5
+      },
+      {
+        "node_id": "Turkey",
+        "name": "Turkey",
+        "value": 100.0
+      },
+      {
+        "node_id": "Italy",
+        "name": "Italy",
+        "value": 98.5
+      },
+      {
+        "node_id": "Iran",
+        "name": "Iran",
+        "value": 97.5
+      },
+      {
+        "node_id": "Iraq",
+        "name": "Iraq",
+        "value": 97.5
+      },
+      {
+        "node_id": "Australia",
+        "name": "Australia",
+        "value": 96.42
+      },
+      {
+        "node_id": "Brazil",
+        "name": "Brazil",
+        "value": 95.83
+      }
+    ],
+    "betweenness": [
+      {
+        "node_id": "United_Kingdom",
+        "name": "United Kingdom",
+        "value": 0.1251
+      },
+      {
+        "node_id": "United_States",
+        "name": "United States",
+        "value": 0.1023
+      },
+      {
+        "node_id": "China",
+        "name": "China",
+        "value": 0.0617
+      },
+      {
+        "node_id": "France",
+        "name": "France",
+        "value": 0.0323
+      },
+      {
+        "node_id": "Germany",
+        "name": "Germany",
+        "value": 0.0237
+      },
+      {
+        "node_id": "Russia",
+        "name": "Russia",
+        "value": 0.0204
+      },
+      {
+        "node_id": "Spain",
+        "name": "Spain",
+        "value": 0.0199
+      },
+      {
+        "node_id": "Netherlands",
+        "name": "Netherlands",
+        "value": 0.0189
+      },
+      {
+        "node_id": "Philippines",
+        "name": "Philippines",
+        "value": 0.0186
+      },
+      {
+        "node_id": "India",
+        "name": "India",
+        "value": 0.0185
+      },
+      {
+        "node_id": "Venezuela",
+        "name": "Venezuela",
+        "value": 0.0172
+      },
+      {
+        "node_id": "Iraq",
+        "name": "Iraq",
+        "value": 0.0154
+      },
+      {
+        "node_id": "Libya",
+        "name": "Libya",
+        "value": 0.0149
+      },
+      {
+        "node_id": "Israel",
+        "name": "Israel",
+        "value": 0.0141
+      },
+      {
+        "node_id": "Iran",
+        "name": "Iran",
+        "value": 0.0141
+      }
+    ],
+    "eigenvector": [
+      {
+        "node_id": "United_States",
+        "name": "United States",
+        "value": 0.2478
+      },
+      {
+        "node_id": "United_Kingdom",
+        "name": "United Kingdom",
+        "value": 0.226
+      },
+      {
+        "node_id": "China",
+        "name": "China",
+        "value": 0.1964
+      },
+      {
+        "node_id": "Germany",
+        "name": "Germany",
+        "value": 0.165
+      },
+      {
+        "node_id": "India",
+        "name": "India",
+        "value": 0.1442
+      },
+      {
+        "node_id": "Iran",
+        "name": "Iran",
+        "value": 0.1352
+      },
+      {
+        "node_id": "Iraq",
+        "name": "Iraq",
+        "value": 0.1301
+      },
+      {
+        "node_id": "Russia",
+        "name": "Russia",
+        "value": 0.1299
+      },
+      {
+        "node_id": "United_Arab_Emirates",
+        "name": "United Arab Emirates",
+        "value": 0.1269
+      },
+      {
+        "node_id": "France",
+        "name": "France",
+        "value": 0.1239
+      },
+      {
+        "node_id": "Saudi_Arabia",
+        "name": "Saudi Arabia",
+        "value": 0.1183
+      },
+      {
+        "node_id": "Egypt",
+        "name": "Egypt",
+        "value": 0.1167
+      },
+      {
+        "node_id": "Libya",
+        "name": "Libya",
+        "value": 0.1166
+      },
+      {
+        "node_id": "South_Africa",
+        "name": "South Africa",
+        "value": 0.1158
+      },
+      {
+        "node_id": "Philippines",
+        "name": "Philippines",
+        "value": 0.1145
+      }
+    ]
+  },
+  "cliques": {
+    "all_links": {
+      "clique_number": 7,
+      "n_max_cliques": 5,
+      "examples": [
+        [
+          "Fiji",
+          "Kiribati",
+          "Solomon Islands",
+          "Tonga",
+          "Tuvalu",
+          "United Kingdom",
+          "Vanuatu"
+        ],
+        [
+          "Fiji",
+          "Kiribati",
+          "New Zealand",
+          "Solomon Islands",
+          "Tonga",
+          "Tuvalu",
+          "United Kingdom"
+        ],
+        [
+          "Australia",
+          "Fiji",
+          "Kiribati",
+          "New Zealand",
+          "Solomon Islands",
+          "Tuvalu",
+          "United Kingdom"
+        ],
+        [
+          "Egypt",
+          "Iraq",
+          "Israel",
+          "Lebanon",
+          "Saudi Arabia",
+          "Sudan",
+          "United Arab Emirates"
+        ],
+        [
+          "Iran",
+          "Iraq",
+          "Israel",
+          "Lebanon",
+          "Saudi Arabia",
+          "Sudan",
+          "United Arab Emirates"
+        ]
+      ],
+      "n_examples_shown": 5
+    },
+    "mutual_only": {
+      "clique_number": 5,
+      "n_max_cliques": 1,
+      "examples": [
+        [
+          "Fiji",
+          "Solomon Islands",
+          "Tonga",
+          "Tuvalu",
+          "Vanuatu"
+        ]
+      ],
+      "n_examples_shown": 1
+    }
+  }
+}

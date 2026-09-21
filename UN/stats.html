@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UN Member States — Network Statistics</title>
+<style>
+  :root {
+    --un-blue: #009EDB;
+    --un-blue-dim: rgba(0, 158, 219, 0.28);
+    --un-navy: #1F3A5F;
+    --un-gold: #C6A664;
+    --un-gold-dim: rgba(198, 166, 100, 0.32);
+    --bg-page: #F3F7FA;
+    --text-body: #24405C;
+    --text-muted: #5B7590;
+    --panel-bg: #FFFFFF;
+    --shadow: 0 8px 28px rgba(31, 58, 95, 0.18);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg-page);
+    color: var(--text-body);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  }
+
+  a { color: var(--un-blue); }
+
+  /* ---------- header (matches un.html) ---------- */
+  .app-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 24px;
+    background: var(--un-navy);
+    color: #fff;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .back-link {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.78);
+    text-decoration: none;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 6px;
+    padding: 6px 12px;
+    white-space: nowrap;
+  }
+  .back-link:hover { color: #fff; border-color: rgba(255,255,255,0.6); }
+
+  .emblem { flex: 0 0 auto; }
+  .emblem .land { fill: #cfe6f2; }
+  .emblem .leaf { fill: var(--un-gold); opacity: 0.95; }
+  .emblem .ring { fill: none; stroke: rgba(255,255,255,0.35); stroke-width: 0.6; }
+
+  .titles h1 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+  }
+  .titles p {
+    margin: 2px 0 0;
+    font-size: 12px;
+    color: rgba(255,255,255,0.72);
+    letter-spacing: 0.3px;
+  }
+
+  /* ---------- page content ---------- */
+  main {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 28px 24px 60px;
+  }
+
+  section { margin-bottom: 40px; }
+
+  h2.section-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--un-navy);
+    border-bottom: 2px solid var(--un-blue-dim);
+    padding-bottom: 8px;
+    margin: 0 0 16px;
+  }
+
+  p.section-note {
+    font-size: 13.5px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin: -6px 0 18px;
+    max-width: 760px;
+  }
+  p.section-note strong { color: var(--text-body); }
+
+  /* ---------- overview / paths stat cards ---------- */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+  }
+  .stat-card {
+    background: var(--panel-bg);
+    border: 1px solid rgba(31,58,95,0.08);
+    border-radius: 10px;
+    padding: 14px 16px;
+    box-shadow: 0 2px 10px rgba(31,58,95,0.06);
+  }
+  .stat-card .stat-label {
+    display: block;
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+  .stat-card .stat-value {
+    display: block;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--un-navy);
+    line-height: 1.2;
+  }
+  .stat-card .stat-value.accent { color: var(--un-blue); }
+  .stat-card .stat-sub {
+    display: block;
+    font-size: 11.5px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  /* ---------- centrality leaderboards ---------- */
+  .leaderboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 16px;
+  }
+
+  .card {
+    background: var(--panel-bg);
+    border: 1px solid rgba(31,58,95,0.08);
+    border-radius: 10px;
+    padding: 18px 20px;
+    box-shadow: 0 2px 10px rgba(31,58,95,0.06);
+  }
+
+  .card h3 {
+    margin: 0 0 3px;
+    font-size: 15px;
+    color: var(--un-navy);
+  }
+  .card .gloss {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.45;
+    margin: 0 0 12px;
+  }
+
+  table.rank-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  table.rank-table td {
+    padding: 5px 4px;
+    border-bottom: 1px solid rgba(31,58,95,0.07);
+  }
+  table.rank-table tr:last-child td { border-bottom: none; }
+  table.rank-table td.rank {
+    color: var(--text-muted);
+    width: 22px;
+    font-variant-numeric: tabular-nums;
+  }
+  table.rank-table td.name { color: var(--text-body); }
+  table.rank-table td.value {
+    text-align: right;
+    font-weight: 700;
+    color: var(--un-blue);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  /* ---------- cliques ---------- */
+  .clique-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+  }
+  .clique-card .clique-number {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    background: var(--un-navy);
+    padding: 2px 10px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+  }
+  .clique-card.mutual .clique-number { background: var(--un-gold); color: #4a3c1c; }
+  .clique-list { margin: 10px 0 0; padding: 0; list-style: none; }
+  .clique-members {
+    background: #F6FAFC;
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin: 0 0 8px;
+    font-size: 12.5px;
+    color: var(--text-body);
+    line-height: 1.5;
+  }
+  .clique-more {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  #error-banner {
+    background: #fff5f5;
+    border: 1px solid #e3a1a1;
+    color: #8a2b2b;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    max-width: 760px;
+  }
+  #error-banner code {
+    background: rgba(0,0,0,0.06);
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+
+  footer.page-footer {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 24px 40px;
+    font-size: 11.5px;
+    color: var(--text-muted);
+  }
+  footer.page-footer a { color: var(--text-muted); }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="brand">
+    <svg class="emblem" width="44" height="44" viewBox="0 0 64 64" aria-hidden="true">
+      <circle class="ring" cx="32" cy="30" r="27" />
+      <g id="emblem-land"></g>
+      <ellipse cx="26.8" cy="53.3" rx="4.6" ry="2.0" class="leaf" transform="rotate(165 26.8 53.3)" />
+      <ellipse cx="21.2" cy="52.6" rx="4.3" ry="1.9" class="leaf" transform="rotate(150 21.2 52.6)" />
+      <ellipse cx="15.7" cy="50.3" rx="4.0" ry="1.8" class="leaf" transform="rotate(135 15.7 50.3)" />
+      <ellipse cx="10.8" cy="46.2" rx="3.7" ry="1.7" class="leaf" transform="rotate(120 10.8 46.2)" />
+      <ellipse cx="6.9"  cy="40.7" rx="3.4" ry="1.6" class="leaf" transform="rotate(105 6.9 40.7)" />
+      <ellipse cx="4.5"  cy="34.0" rx="3.1" ry="1.5" class="leaf" transform="rotate(90 4.5 34.0)" />
+      <ellipse cx="4.0"  cy="26.5" rx="2.8" ry="1.4" class="leaf" transform="rotate(75 4.0 26.5)" />
+      <ellipse cx="37.2" cy="53.3" rx="4.6" ry="2.0" class="leaf" transform="rotate(15 37.2 53.3)" />
+      <ellipse cx="42.8" cy="52.6" rx="4.3" ry="1.9" class="leaf" transform="rotate(30 42.8 52.6)" />
+      <ellipse cx="48.3" cy="50.3" rx="4.0" ry="1.8" class="leaf" transform="rotate(45 48.3 50.3)" />
+      <ellipse cx="53.2" cy="46.2" rx="3.7" ry="1.7" class="leaf" transform="rotate(60 53.2 46.2)" />
+      <ellipse cx="57.1" cy="40.7" rx="3.4" ry="1.6" class="leaf" transform="rotate(75 57.1 40.7)" />
+      <ellipse cx="59.5" cy="34.0" rx="3.1" ry="1.5" class="leaf" transform="rotate(90 59.5 34.0)" />
+      <ellipse cx="60.0" cy="26.5" rx="2.8" ry="1.4" class="leaf" transform="rotate(105 60.0 26.5)" />
+    </svg>
+    <div class="titles">
+      <h1>Network Statistics</h1>
+      <p>UN Member States &middot; Wikipedia Link Network</p>
+    </div>
+  </div>
+  <a class="back-link" href="un.html">&larr; Back to Map</a>
+</header>
+
+<main id="main">
+  <div id="error-banner" hidden></div>
+  <div id="content" hidden>
+
+    <section id="section-overview">
+      <h2 class="section-title">Overview</h2>
+      <p class="section-note">
+        193 UN member states, one node each, with a directed edge A&nbsp;&rarr;&nbsp;B when A's
+        Wikipedia article links to B's. Built and computed exactly as described in
+        <a href="build_un_network.ipynb">build_un_network.ipynb</a> and
+        <a href="analyze_network.py">analyze_network.py</a> &mdash; re-run the latter any time
+        the edge list changes to refresh these numbers.
+      </p>
+      <div class="stat-grid" id="overview-grid"></div>
+    </section>
+
+    <section id="section-paths">
+      <h2 class="section-title">Paths &amp; Distances</h2>
+      <p class="section-note">
+        Computed on the <strong>undirected</strong> giant component (<code>G.to_undirected()</code>,
+        largest connected component) &mdash; same treatment exercise 3.3 gives the Marvel network,
+        since path length and diameter need a graph where every reachable pair actually has a path
+        to measure.
+      </p>
+      <div class="stat-grid" id="paths-grid"></div>
+    </section>
+
+    <section id="section-centrality">
+      <h2 class="section-title">Centrality Leaderboards</h2>
+      <p class="section-note">
+        Top 15 by each measure, with the underlying value shown &mdash; not just a bare ranking.
+        Each measure answers a different question about a country's position in the network.
+      </p>
+      <div class="leaderboard-grid" id="centrality-grid"></div>
+    </section>
+
+    <section id="section-cliques">
+      <h2 class="section-title">Cliques</h2>
+      <p class="section-note">
+        A clique is a set of countries that are <strong>all</strong> pairwise linked to each other.
+        Two different, deliberately separate notions of "linked" are used below, since they answer
+        different questions and give very different answers.
+      </p>
+      <div class="clique-grid" id="clique-grid"></div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="page-footer" id="page-footer" hidden></footer>
+
+<script>
+(async function () {
+  "use strict";
+
+  const STATS_URL = "./data/network_stats.json";
+
+  const errorBanner = document.getElementById("error-banner");
+  const content = document.getElementById("content");
+  const footer = document.getElementById("page-footer");
+
+  function showError(message) {
+    errorBanner.innerHTML = message;
+    errorBanner.hidden = false;
+  }
+
+  let stats;
+  try {
+    const res = await fetch(STATS_URL);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    stats = await res.json();
+  } catch (err) {
+    console.error("Failed to load network stats:", err);
+    showError(
+      "Could not load <code>data/network_stats.json</code>. This page fetches it at runtime, " +
+      "which browsers block over a plain <code>file://</code> URL. Serve this folder locally, e.g. " +
+      "<code>python3 -m http.server 8000</code> from the UN/ folder, then open " +
+      "<code>http://localhost:8000/stats.html</code> &mdash; or run " +
+      "<code>python3 analyze_network.py</code> first if the file doesn't exist yet."
+    );
+    return;
+  }
+
+  function statCard(label, value, sub, accent) {
+    const div = document.createElement("div");
+    div.className = "stat-card";
+    div.innerHTML = `
+      <span class="stat-label">${label}</span>
+      <span class="stat-value${accent ? " accent" : ""}">${value}</span>
+      ${sub ? `<span class="stat-sub">${sub}</span>` : ""}
+    `;
+    return div;
+  }
+
+  // ------------------------------------------------------------ overview --
+  const ov = stats.overview;
+  const overviewGrid = document.getElementById("overview-grid");
+  overviewGrid.append(
+    statCard("Nodes", ov.n_nodes, "UN member states"),
+    statCard("Edges", ov.n_edges, "directed, unweighted", true),
+    statCard("Density", ov.density.toFixed(4), "of all possible directed edges"),
+    statCard(
+      "Reciprocity",
+      `${(ov.reciprocity.fraction * 100).toFixed(1)}%`,
+      `${ov.reciprocity.reciprocated_edges} of ${ov.reciprocity.total_edges} edges go both ways`,
+      true
+    ),
+    statCard(
+      "Weakly connected",
+      `${ov.weakly_connected.giant_size} / ${ov.n_nodes}`,
+      ov.weakly_connected.outside_giant.length
+        ? `outside giant: ${ov.weakly_connected.outside_giant.join(", ")}`
+        : "every country reaches every other, ignoring direction"
+    ),
+    statCard(
+      "Strongly connected",
+      `${ov.strongly_connected.giant_size} / ${ov.n_nodes}`,
+      `${ov.strongly_connected.n_components} components -- direction matters here`
+    )
+  );
+
+  // --------------------------------------------------------------- paths --
+  const pa = stats.paths;
+  const pathsGrid = document.getElementById("paths-grid");
+  pathsGrid.append(
+    statCard("Average path length", pa.avg_path_length, `over ${pa.n_nodes_in_component} nodes`, true),
+    statCard("Diameter", pa.diameter, "longest shortest path"),
+    statCard("Radius", pa.radius, "shortest “worst case” distance from the most central node"),
+    statCard("Center", pa.center.join(", "), "node(s) achieving the radius", true)
+  );
+
+  // ---------------------------------------------------------- centrality --
+  const centralityGrid = document.getElementById("centrality-grid");
+
+  function leaderboardCard(title, gloss, items, formatValue) {
+    const card = document.createElement("div");
+    card.className = "card";
+    const rows = items.map((item, i) => `
+      <tr>
+        <td class="rank">${i + 1}</td>
+        <td class="name">${item.name}</td>
+        <td class="value">${formatValue(item.value)}</td>
+      </tr>
+    `).join("");
+    card.innerHTML = `
+      <h3>${title}</h3>
+      <p class="gloss">${gloss}</p>
+      <table class="rank-table"><tbody>${rows}</tbody></table>
+    `;
+    return card;
+  }
+
+  const c = stats.centrality;
+  const intFmt = (v) => v;
+  const decFmt = (v) => v.toFixed(v < 1 ? 4 : 2);
+
+  centralityGrid.append(
+    leaderboardCard(
+      "In-Degree",
+      "Who gets linked TO the most &mdash; whose article is cited by the most other countries.",
+      c.in_degree, intFmt
+    ),
+    leaderboardCard(
+      "Out-Degree",
+      "Who links OUT the most &mdash; whose own article mentions the most other countries.",
+      c.out_degree, intFmt
+    ),
+    leaderboardCard(
+      "Total Degree",
+      "In-degree plus out-degree combined &mdash; overall wikitext connectedness.",
+      c.total_degree, intFmt
+    ),
+    leaderboardCard(
+      "Harmonic Centrality",
+      "Used in place of plain closeness centrality: closeness zeroes out for any node that " +
+      "can't reach every other node, which happens constantly on a directed, imperfectly-connected " +
+      "graph like this one. Harmonic centrality sums 1&frasl;distance over every other node instead, " +
+      "so an unreachable node just contributes 0 rather than breaking the whole score. Computed on " +
+      "the directed graph.",
+      c.harmonic, decFmt
+    ),
+    leaderboardCard(
+      "Betweenness Centrality",
+      "Which countries sit on the most shortest paths between other pairs of countries &mdash; " +
+      "removing a high-betweenness node would fragment a lot of shortest routes through the network. " +
+      "Computed on the undirected giant component.",
+      c.betweenness, decFmt
+    ),
+    leaderboardCard(
+      "Eigenvector Centrality",
+      "Not just how many connections a country has, but how well-connected its neighbors are &mdash; " +
+      "a link from an important country counts for more. Computed on the undirected giant component " +
+      "(the directed version can silently zero out everything upstream of the dominant strongly " +
+      "connected component).",
+      c.eigenvector, decFmt
+    )
+  );
+
+  // ------------------------------------------------------------- cliques --
+  const cliqueGrid = document.getElementById("clique-grid");
+
+  function cliqueCard(title, gloss, result, extraClass) {
+    const card = document.createElement("div");
+    card.className = "card clique-card" + (extraClass ? " " + extraClass : "");
+    const membersHtml = result.examples.map(members =>
+      `<li class="clique-members">${members.join(", ")}</li>`
+    ).join("");
+    const moreNote = result.n_max_cliques > result.n_examples_shown
+      ? `<p class="clique-more">...and ${result.n_max_cliques - result.n_examples_shown} more of the same size, not shown.</p>`
+      : "";
+    card.innerHTML = `
+      <span class="clique-number">clique number = ${result.clique_number}</span>
+      <h3>${title}</h3>
+      <p class="gloss">${gloss}</p>
+      <ul class="clique-list">${membersHtml}</ul>
+      ${moreNote}
+    `;
+    return card;
+  }
+
+  cliqueGrid.append(
+    cliqueCard(
+      "All-Links Clique",
+      "Edge exists if EITHER country's article links to the other (the union &mdash; " +
+      "<code>G.to_undirected()</code>). The looser, larger-clique version: “these countries " +
+      "all at least mention each other.”",
+      stats.cliques.all_links
+    ),
+    cliqueCard(
+      "Mutual-Links-Only Clique",
+      "Edge exists ONLY if BOTH articles link to each other (the reciprocal subgraph). Stricter and " +
+      "sparser, so a smaller clique number is expected &mdash; this is “these countries all " +
+      "substantively write about each other,” not just a one-way mention.",
+      stats.cliques.mutual_only,
+      "mutual"
+    )
+  );
+
+  // -------------------------------------------------------------- footer --
+  const generated = new Date(stats.generated_at);
+  footer.textContent = `Stats generated ${generated.toUTCString()} by analyze_network.py from `;
+  const nodesLink = document.createElement("a");
+  nodesLink.href = "data/un_nodes.tsv";
+  nodesLink.textContent = "un_nodes.tsv";
+  const edgesLink = document.createElement("a");
+  edgesLink.href = "data/un_edges.tsv";
+  edgesLink.textContent = "un_edges.tsv";
+  footer.append(nodesLink, " and ", edgesLink, ".");
+  footer.hidden = false;
+
+  content.hidden = false;
+})();
+</script>
+</body>
+</html>

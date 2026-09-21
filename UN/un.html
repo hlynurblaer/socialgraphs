@@ -58,6 +58,12 @@
     gap: 14px;
   }
 
+  .header-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
   .back-link {
     font-size: 12.5px;
     font-weight: 600;
@@ -69,6 +75,19 @@
     white-space: nowrap;
   }
   .back-link:hover { color: #fff; border-color: rgba(255,255,255,0.6); }
+
+  .stats-link {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--un-navy);
+    text-decoration: none;
+    background: var(--un-gold);
+    border: 1px solid var(--un-gold);
+    border-radius: 6px;
+    padding: 6px 12px;
+    white-space: nowrap;
+  }
+  .stats-link:hover { background: #d4b578; }
 
   .emblem { flex: 0 0 auto; }
   .emblem .land { fill: #cfe6f2; }
@@ -414,7 +433,10 @@
         <p>Wikipedia Link Network</p>
       </div>
     </div>
-    <a class="back-link" href="../index.html">&larr; All Issues</a>
+    <div class="header-nav">
+      <a class="stats-link" href="stats.html">Stats &rarr;</a>
+      <a class="back-link" href="../index.html">&larr; All Issues</a>
+    </div>
   </header>
 
   <div class="map-wrap">
