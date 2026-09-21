@@ -2,7 +2,16 @@
 # Directed, unweighted: edge A -> B when A's article wikitext links to B's,
 # counting only inline links from the article's OWN prose/infobox -- links
 # injected by shared navigation templates (e.g. the UN navbox) are excluded.
-# 193 nodes, 2193 directed edges.
+# 193 nodes, 2199 directed edges.
+# Manual addition (2026-09-21): Kenya -> {Ethiopia, Somalia, South_Sudan,
+# Sudan, Tanzania, Uganda}. Kenya's intro sentence names all six as
+# neighbors/border context in plain prose ("Kenya is bordered by South
+# Sudan to the northwest, Ethiopia to the north, Somalia to the east...")
+# without wikilinking any of them -- only "Lake Victoria" is bracketed in
+# that sentence -- so the extraction rule correctly found zero out-edges
+# for Kenya even though the source article clearly discusses all six.
+# Added by hand rather than relaxing the extraction rule, which would
+# require guessing at unlinked plain-text mentions article-wide.
 # source	target
 Afghanistan	Bolivia
 Afghanistan	Cambodia
@@ -894,6 +903,12 @@ Kazakhstan	Turkey
 Kazakhstan	Turkmenistan
 Kazakhstan	Ukraine
 Kazakhstan	Uzbekistan
+Kenya	Ethiopia
+Kenya	Somalia
+Kenya	South_Sudan
+Kenya	Sudan
+Kenya	Tanzania
+Kenya	Uganda
 Kiribati	China
 Kiribati	Federated_States_of_Micronesia
 Kiribati	Fiji
