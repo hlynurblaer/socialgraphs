@@ -257,6 +257,62 @@
   .zoom-controls button:active { background: var(--un-navy); color: #fff; }
   .zoom-controls #zoom-reset { font-size: 13px; }
 
+  #network {
+    width: 100%;
+    height: 100%;
+    display: block;
+    background: var(--map-ocean);
+    cursor: grab;
+    touch-action: none;
+  }
+
+  /* #map and #network are toggled via the [hidden] attribute, but each has
+     its own #id { display: block } rule above, whose specificity beats the
+     browser's default `[hidden] { display: none }` UA rule -- without this,
+     the "hidden" one stays visible and both stack on top of each other.
+     Also given explicit absolute positioning so, once that's fixed, the one
+     that's showing overlays #map-container the same way every other layer
+     here does, instead of sitting in normal document flow. Same issue (and
+     same fix) applies to #map-controls/#network-controls below, via
+     .controls-box's own unconditional `display: flex`. */
+  #map, #network {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  #map[hidden], #network[hidden],
+  #map-controls[hidden], #network-controls[hidden] {
+    display: none;
+  }
+  #network:active { cursor: grabbing; }
+
+  .view-toggle-box {
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 4px;
+  }
+  .view-toggle-box button {
+    appearance: none;
+    border: 1px solid var(--un-navy);
+    background: var(--un-navy);
+    color: #fff;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    padding: 7px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .view-toggle-box button:hover { background: #2a4a75; }
+
+  .continent-legend-row { display: flex; align-items: center; gap: 7px; }
+  .continent-swatch {
+    width: 10px; height: 10px; border-radius: 50%; flex: 0 0 auto;
+    border: 1px solid rgba(31,58,95,0.25);
+  }
+
   .hint-box {
     bottom: 14px;
     left: 14px;
@@ -432,18 +488,23 @@
         <h1>United Nations Member States</h1>
         <p>Wikipedia Link Network</p>
       </div>
+      <a class="stats-link" href="stats.html">Statistics</a>
     </div>
-    <div class="header-nav">
-      <a class="stats-link" href="stats.html">Stats &rarr;</a>
-      <a class="back-link" href="../index.html">&larr; All Issues</a>
-    </div>
+    <a class="back-link" href="../index.html">&larr; All Issues</a>
   </header>
 
   <div class="map-wrap">
     <div id="map-container">
-      <svg id="map" viewBox="0 0 960 520" preserveAspectRatio="xMidYMid meet"></svg>
+      <svg id="map" viewBox="0 0 1060 520" preserveAspectRatio="xMidYMid meet"></svg>
+      <canvas id="network" hidden></canvas>
 
-      <div class="overlay-panel controls-box">
+      <div class="overlay-panel view-toggle-box">
+        <button type="button" id="view-toggle" title="Switch to the interactive network view">
+          <span id="view-toggle-icon">&#8646;</span> <span id="view-toggle-label">Network View</span>
+        </button>
+      </div>
+
+      <div class="overlay-panel controls-box" id="map-controls">
         <div>
           <div class="toggle-label">Edges shown</div>
           <div class="toggle-group" role="group" aria-label="Edge direction filter">
@@ -459,14 +520,29 @@
         </div>
       </div>
 
+      <div class="overlay-panel controls-box" id="network-controls" hidden>
+        <div>
+          <div class="toggle-label">Colour nodes by</div>
+          <div class="toggle-group" role="group" aria-label="Node colour mode">
+            <button type="button" data-color-mode="degree" class="active" title="Uniform colour, sized by degree">Degree</button>
+            <button type="button" data-color-mode="continent" title="Colour by continent">Continent</button>
+          </div>
+        </div>
+        <div class="legend" id="continent-legend" hidden></div>
+      </div>
+
       <div class="overlay-panel zoom-controls">
         <button type="button" id="zoom-in" aria-label="Zoom in" title="Zoom in">+</button>
         <button type="button" id="zoom-out" aria-label="Zoom out" title="Zoom out">&minus;</button>
         <button type="button" id="zoom-reset" aria-label="Reset view" title="Reset view">&#8634;</button>
       </div>
 
-      <div class="overlay-panel hint-box">
+      <div class="overlay-panel hint-box" id="map-hint">
         <strong>Hover</strong> a country to preview its links · <strong>Click</strong> to pin the panel open · use the toggle above to change which edges are drawn · <strong>scroll</strong> or the +/&minus; buttons to zoom · <strong>drag</strong> to pan.
+      </div>
+
+      <div class="overlay-panel hint-box" id="network-hint" hidden>
+        <strong>Hover</strong> a country to trace its links · <strong>Click</strong> to pin the panel open · <strong>drag</strong> a node to nudge it · <strong>scroll</strong> or the +/&minus; buttons to zoom · node size &mdash; total degree.
       </div>
 
       <div id="error-banner" hidden></div>
@@ -569,6 +645,89 @@
     "Croatia": [15.466667, 45.25],
     "Israel": [35, 31],
     "Vietnam": [108, 16],
+  };
+
+  // Tonga, Samoa and Kiribati sit just east of the antimeridian (roughly
+  // -175, -172 and -157 to 172 degrees longitude), which on this 0-centered
+  // projection puts them at the FAR LEFT edge of the map -- while Fiji,
+  // Vanuatu and the rest of the Pacific-islands cluster (all just west of
+  // the antimeridian) land at the far RIGHT edge. Same real-world
+  // neighborhood, opposite edges of the rendered map: there is no single
+  // rotation of this projection that fixes that for these three without
+  // moving the seam somewhere else inconvenient (through Europe/Africa).
+  // Instead of a global rotation, these three get an explicit SCREEN-SPACE
+  // position (world units, post-projection, in the extra padding added to
+  // the right of the map -- see PACIFIC_PAD below) placed next to the rest
+  // of the Pacific cluster. Their actual landmass polygons stay in their
+  // true (left-edge) position; only the marker/edge endpoint moves, same
+  // as every other manual override, just in pixel space instead of lon/lat.
+  const PACIFIC_PIXEL_OVERRIDES = {
+    "Kiribati": [1030, 288],
+    "Samoa": [1000, 330],
+    "Tonga": [978, 362],
+  };
+  const PACIFIC_PAD = 100;
+
+  // Continent for each of the 193 member states, from Wikidata's P30
+  // "continent" claim (fetched via a batched SPARQL query against all 193
+  // wikidata_ids, cross-checked for coverage -- every node_id below has an
+  // entry). A handful of countries carry more than one P30 value; resolved
+  // by hand using the conventional single-continent classification rather
+  // than an arbitrary pick: Turkey and Kazakhstan -> Asia (predominant
+  // landmass), Russia -> Europe (conventional grouping despite Asian
+  // majority landmass). "Insular Oceania" (Fiji, Vanuatu's secondary P30
+  // value) is folded into plain "Oceania".
+  const CONTINENT_BY_ID = {
+    "Afghanistan": "Asia", "Albania": "Europe", "Algeria": "Africa", "Andorra": "Europe",
+    "Angola": "Africa", "Antigua_and_Barbuda": "North America", "Argentina": "South America", "Armenia": "Asia",
+    "Australia": "Oceania", "Austria": "Europe", "Azerbaijan": "Asia", "Bahrain": "Asia",
+    "Bangladesh": "Asia", "Barbados": "North America", "Belarus": "Europe", "Belgium": "Europe",
+    "Belize": "North America", "Benin": "Africa", "Bhutan": "Asia", "Bolivia": "South America",
+    "Bosnia_and_Herzegovina": "Europe", "Botswana": "Africa", "Brazil": "South America", "Brunei": "Asia",
+    "Bulgaria": "Europe", "Burkina_Faso": "Africa", "Burundi": "Africa", "Cambodia": "Asia",
+    "Cameroon": "Africa", "Canada": "North America", "Cape_Verde": "Africa", "Central_African_Republic": "Africa",
+    "Chad": "Africa", "Chile": "South America", "China": "Asia", "Colombia": "South America",
+    "Comoros": "Africa", "Costa_Rica": "North America", "Croatia": "Europe", "Cuba": "North America",
+    "Cyprus": "Europe", "Czech_Republic": "Europe", "Democratic_Republic_of_the_Congo": "Africa", "Denmark": "Europe",
+    "Djibouti": "Africa", "Dominica": "North America", "Dominican_Republic": "North America", "Ecuador": "South America",
+    "Egypt": "Africa", "El_Salvador": "North America", "Equatorial_Guinea": "Africa", "Eritrea": "Africa",
+    "Estonia": "Europe", "Eswatini": "Africa", "Ethiopia": "Africa", "Federated_States_of_Micronesia": "Oceania",
+    "Fiji": "Oceania", "Finland": "Europe", "France": "Europe", "Gabon": "Africa",
+    "Georgia_(country)": "Europe", "Germany": "Europe", "Ghana": "Africa", "Greece": "Europe",
+    "Grenada": "North America", "Guatemala": "North America", "Guinea": "Africa", "Guinea-Bissau": "Africa",
+    "Guyana": "South America", "Haiti": "North America", "Honduras": "North America", "Hungary": "Europe",
+    "Iceland": "Europe", "India": "Asia", "Indonesia": "Asia", "Iran": "Asia",
+    "Iraq": "Asia", "Israel": "Asia", "Italy": "Europe", "Ivory_Coast": "Africa",
+    "Jamaica": "North America", "Japan": "Asia", "Jordan": "Asia", "Kazakhstan": "Asia",
+    "Kenya": "Africa", "Kiribati": "Oceania", "Kuwait": "Asia", "Kyrgyzstan": "Asia",
+    "Laos": "Asia", "Latvia": "Europe", "Lebanon": "Asia", "Lesotho": "Africa",
+    "Liberia": "Africa", "Libya": "Africa", "Liechtenstein": "Europe", "Lithuania": "Europe",
+    "Luxembourg": "Europe", "Madagascar": "Africa", "Malawi": "Africa", "Malaysia": "Asia",
+    "Maldives": "Asia", "Mali": "Africa", "Malta": "Europe", "Marshall_Islands": "Oceania",
+    "Mauritania": "Africa", "Mauritius": "Africa", "Mexico": "North America", "Moldova": "Europe",
+    "Monaco": "Europe", "Mongolia": "Asia", "Montenegro": "Europe", "Morocco": "Africa",
+    "Mozambique": "Africa", "Myanmar": "Asia", "Namibia": "Africa", "Nauru": "Oceania",
+    "Nepal": "Asia", "Netherlands": "Europe", "New_Zealand": "Oceania", "Nicaragua": "North America",
+    "Niger": "Africa", "Nigeria": "Africa", "North_Korea": "Asia", "North_Macedonia": "Europe",
+    "Norway": "Europe", "Oman": "Asia", "Pakistan": "Asia", "Palau": "Oceania",
+    "Panama": "North America", "Papua_New_Guinea": "Oceania", "Paraguay": "South America", "Peru": "South America",
+    "Philippines": "Asia", "Poland": "Europe", "Portugal": "Europe", "Qatar": "Asia",
+    "Republic_of_Ireland": "Europe", "Republic_of_the_Congo": "Africa", "Romania": "Europe", "Russia": "Europe",
+    "Rwanda": "Africa", "Saint_Kitts_and_Nevis": "North America", "Saint_Lucia": "North America", "Saint_Vincent_and_the_Grenadines": "North America",
+    "Samoa": "Oceania", "San_Marino": "Europe", "Saudi_Arabia": "Asia", "Senegal": "Africa",
+    "Serbia": "Europe", "Seychelles": "Africa", "Sierra_Leone": "Africa", "Singapore": "Asia",
+    "Slovakia": "Europe", "Slovenia": "Europe", "Solomon_Islands": "Oceania", "Somalia": "Africa",
+    "South_Africa": "Africa", "South_Korea": "Asia", "South_Sudan": "Africa", "Spain": "Europe",
+    "Sri_Lanka": "Asia", "Sudan": "Africa", "Suriname": "South America", "Sweden": "Europe",
+    "Switzerland": "Europe", "Syria": "Asia", "São_Tomé_and_Príncipe": "Africa", "Tajikistan": "Asia",
+    "Tanzania": "Africa", "Thailand": "Asia", "The_Bahamas": "North America", "The_Gambia": "Africa",
+    "Timor-Leste": "Asia", "Togo": "Africa", "Tonga": "Oceania", "Trinidad_and_Tobago": "North America",
+    "Tunisia": "Africa", "Turkey": "Asia", "Turkmenistan": "Asia", "Tuvalu": "Oceania",
+    "Uganda": "Africa", "Ukraine": "Europe", "United_Arab_Emirates": "Asia", "United_Kingdom": "Europe",
+    "United_States": "North America", "Uruguay": "South America", "Uzbekistan": "Asia", "Vanuatu": "Oceania",
+    "Venezuela": "South America", "Vietnam": "Asia", "Yemen": "Asia", "Zambia": "Africa",
+    "Zimbabwe": "Africa"
+
   };
 
   // For a MultiPolygon feature, geoCentroid area-weights across every ring
@@ -695,15 +854,25 @@
 
   // ------------------------------------------------------------ projection --
   const width = 960, height = 520;
+  const totalWidth = width + PACIFIC_PAD; // extra ocean padding on the right, see PACIFIC_PIXEL_OVERRIDES above
   const fitFeatures = {
     type: "FeatureCollection",
     features: countriesGeo.features.filter(f => f.properties.name !== "Antarctica"),
   };
+  // fitSize uses the ORIGINAL width, not totalWidth -- the extra padding is
+  // blank canvas bolted on the side, not extra room the map itself scales
+  // into (which would shrink/distort every other country to compensate).
   const projection = d3.geoNaturalEarth1().fitSize([width, height], fitFeatures);
   const path = d3.geoPath(projection);
 
+  function nodeScreenPos(nodeId) {
+    if (PACIFIC_PIXEL_OVERRIDES[nodeId]) return PACIFIC_PIXEL_OVERRIDES[nodeId];
+    const coords = coordsByNodeId.get(nodeId);
+    return coords ? projection(coords) : null;
+  }
+
   mapSvg.append("rect")
-    .attr("width", width).attr("height", height)
+    .attr("width", totalWidth).attr("height", height)
     .attr("fill", "var(--map-ocean)");
 
   // Everything pannable/zoomable lives in this one group; the ocean rect
@@ -749,9 +918,9 @@
 
   // --------------------------------------------------------------- edges --
   function edgePathD(e) {
-    const s = coordsByNodeId.get(e.source), t = coordsByNodeId.get(e.target);
+    const s = nodeScreenPos(e.source), t = nodeScreenPos(e.target);
     if (!s || !t) return null;
-    const [x1, y1] = projection(s), [x2, y2] = projection(t);
+    const [x1, y1] = s, [x2, y2] = t;
     const dx = x2 - x1, dy = y2 - y1;
     const dist = Math.sqrt(dx * dx + dy * dy) || 1;
     // gentle perpendicular bow so overlapping edges stay visually separable
@@ -785,8 +954,8 @@
     .join("circle")
     .attr("class", "marker")
     .attr("r", 3.4)
-    .attr("cx", n => projection(coordsByNodeId.get(n.node_id))[0])
-    .attr("cy", n => projection(coordsByNodeId.get(n.node_id))[1])
+    .attr("cx", n => nodeScreenPos(n.node_id)[0])
+    .attr("cy", n => nodeScreenPos(n.node_id)[1])
     .on("mouseenter", (event, n) => onHoverEnter(n.node_id))
     .on("mouseleave", (event, n) => onHoverLeave(n.node_id))
     .on("click", (event, n) => { event.stopPropagation(); onClickNode(n.node_id); });
@@ -796,11 +965,33 @@
   mapSvg.on("click", () => { pinnedNode = null; hoverNode = null; render(); });
 
   // -------------------------------------------------------------- zoom ----
+  // Marker radius is defined in world units, same as everything else in
+  // zoomLayer -- so without this, zooming in also visually inflates every
+  // dot by the zoom factor, until the map is just a blob of overlapping
+  // circles with no country outlines visible underneath. Rescaling radius
+  // by 1/k keeps each dot's ON-SCREEN size roughly constant as the
+  // underlying map grows around it, so borders stay visible at any zoom
+  // level. Floored at MIN_R so dots stay clickable at the max zoom level
+  // rather than shrinking to nothing.
+  let currentZoomK = 1;
+  const BASE_R = 3.4, FOCUSED_R = 6, MIN_R = 1.2;
+
+  function markerRadiusFor(isFocused) {
+    return Math.max(MIN_R, (isFocused ? FOCUSED_R : BASE_R) / currentZoomK);
+  }
+
+  function updateMarkerRadii() {
+    const active = activeNode();
+    markers.attr("r", n => markerRadiusFor(n.node_id === active));
+  }
+
   const zoom = d3.zoom()
     .scaleExtent([1, 10])
-    .translateExtent([[0, 0], [width, height]])
+    .translateExtent([[0, 0], [totalWidth, height]])
     .on("zoom", (event) => {
       zoomLayer.attr("transform", event.transform);
+      currentZoomK = event.transform.k;
+      updateMarkerRadii();
     });
 
   mapSvg.call(zoom);
@@ -813,13 +1004,13 @@
   // the normal extent once the panel closes.
   function updatePanExtent(panelOpen) {
     const svgRect = mapSvg.node().getBoundingClientRect();
-    const cssPerWorldUnit = svgRect.width / width;
+    const cssPerWorldUnit = svgRect.width / totalWidth;
     let extra = 0;
     if (panelOpen && cssPerWorldUnit > 0) {
       const panelWidth = document.getElementById("side-panel").getBoundingClientRect().width;
       extra = panelWidth / cssPerWorldUnit;
     }
-    zoom.translateExtent([[0, 0], [width + extra, height]]);
+    zoom.translateExtent([[0, 0], [totalWidth + extra, height]]);
   }
 
   window.addEventListener("resize", () => {
@@ -843,30 +1034,41 @@
   let mode = "both";
   let hoverNode = null;
   let pinnedNode = null;
+  let viewMode = "map"; // "map" | "network" -- see the network-view section below
 
   function activeNode() { return pinnedNode || hoverNode || null; }
+
+  // Both views share hover/pin selection state and the side panel; each
+  // just has its own way of drawing the highlight. renderNetwork is defined
+  // later (function declarations hoist, so this is safe) but never actually
+  // called until the network view has been opened at least once.
+  function renderActive() {
+    if (viewMode === "network") renderNetwork();
+    else render();
+  }
 
   function onHoverEnter(nodeId) {
     if (!nodeId || pinnedNode) return;
     hoverNode = nodeId;
-    render();
+    renderActive();
   }
   function onHoverLeave(nodeId) {
     if (!nodeId || pinnedNode) return;
     hoverNode = null;
-    render();
+    renderActive();
   }
   function onClickNode(nodeId) {
     pinnedNode = (pinnedNode === nodeId) ? null : nodeId;
     hoverNode = null;
-    render();
+    renderActive();
   }
 
-  document.querySelectorAll(".toggle-group button").forEach(btn => {
+  document.querySelectorAll(".toggle-group[aria-label='Edge direction filter'] button").forEach(btn => {
     btn.addEventListener("click", (event) => {
       event.stopPropagation();
       mode = btn.dataset.mode;
-      document.querySelectorAll(".toggle-group button").forEach(b => b.classList.toggle("active", b === btn));
+      document.querySelectorAll(".toggle-group[aria-label='Edge direction filter'] button")
+        .forEach(b => b.classList.toggle("active", b === btn));
       render();
     });
   });
@@ -875,7 +1077,7 @@
     event.stopPropagation();
     pinnedNode = null;
     hoverNode = null;
-    render();
+    renderActive();
   });
 
   // ------------------------------------------------------------ rendering --
@@ -940,7 +1142,7 @@
     markers
       .classed("dim", n => !!(highlighted && !highlighted.has(n.node_id)))
       .classed("focused", n => n.node_id === active)
-      .attr("r", n => n.node_id === active ? 6 : 3.4);
+      .attr("r", n => markerRadiusFor(n.node_id === active));
 
     renderPanel(active);
   }
@@ -1012,6 +1214,307 @@
     link.textContent = "View on Wikipedia →";
     content.appendChild(link);
   }
+
+
+  // =========================================================================
+  // Interactive network view -- a force-directed alternative to the map,
+  // toggled via #view-toggle. Built on canvas rather than SVG for the same
+  // reason week 1's Marvel graph was rewritten to canvas: updating a couple
+  // thousand SVG element attributes every simulation tick is expensive
+  // DOM work, where a canvas redraw is one cheap pass of draw calls. Shares
+  // hover/pin selection state and the side panel with the map view via the
+  // existing onHoverEnter/onHoverLeave/onClickNode functions above, so
+  // switching views mid-selection keeps whatever was pinned.
+  // =========================================================================
+
+  const CONTINENT_COLORS = {
+    "Africa": "#C97B3D",
+    "Asia": "#6B8F71",
+    "Europe": "#009EDB",
+    "North America": "#7B6FA6",
+    "Oceania": "#C6A664",
+    "South America": "#D1495B",
+  };
+  const DEGREE_COLOR = "#1F3A5F";
+
+  let colorMode = "degree";
+  let networkInitialized = false;
+  let netCanvas, netCtx, netDPR, netW, netH;
+  let netSimulation, netEdges, netNeighbors, netRadiusScale;
+  let netZoomTransform = d3.zoomIdentity;
+  let netRenderQueued = false;
+
+  const totalDegreeById = new Map(
+    nodes.map(n => [n.node_id, (outDegree.get(n.node_id) || 0) + (inDegree.get(n.node_id) || 0)])
+  );
+
+  function netRadiusFor(nodeId, isFocused) {
+    const base = netRadiusScale(totalDegreeById.get(nodeId) || 0);
+    return isFocused ? base + 3 : base;
+  }
+
+  function nodeColor(nodeId) {
+    if (colorMode === "continent") {
+      return CONTINENT_COLORS[CONTINENT_BY_ID[nodeId]] || "#8892a6";
+    }
+    return DEGREE_COLOR;
+  }
+
+  function requestNetRender() {
+    if (netRenderQueued) return;
+    netRenderQueued = true;
+    requestAnimationFrame(() => { netRenderQueued = false; renderNetworkCanvas(); });
+  }
+
+  function renderNetworkCanvas() {
+    if (!networkInitialized) return;
+    const t = netZoomTransform;
+    netCtx.setTransform(netDPR, 0, 0, netDPR, 0, 0);
+    netCtx.clearRect(0, 0, netW, netH);
+    netCtx.translate(t.x, t.y);
+    netCtx.scale(t.k, t.k);
+
+    const active = activeNode();
+    const nb = active ? netNeighbors.get(active) : null;
+
+    netEdges.forEach(e => {
+      const s = e.source, tg = e.target;
+      let strokeStyle, alpha, width;
+      if (active) {
+        if (s.node_id === active) { strokeStyle = "#009EDB"; alpha = 0.9; width = 1.6; }
+        else if (tg.node_id === active) { strokeStyle = "#C6A664"; alpha = 0.9; width = 1.6; }
+        else { strokeStyle = "#9FBFD4"; alpha = 0.05; width = 0.6; }
+      } else {
+        strokeStyle = "#9FBFD4"; alpha = 0.22; width = 0.6;
+      }
+      netCtx.globalAlpha = alpha;
+      netCtx.strokeStyle = strokeStyle;
+      netCtx.lineWidth = width;
+      netCtx.beginPath();
+      netCtx.moveTo(s.x, s.y);
+      netCtx.lineTo(tg.x, tg.y);
+      netCtx.stroke();
+    });
+
+    nodes.forEach(n => {
+      const isFocused = n.node_id === active;
+      const r = netRadiusFor(n.node_id, isFocused);
+      const dimmed = active && n.node_id !== active && !(nb && (nb.in.has(n.node_id) || nb.out.has(n.node_id)));
+      netCtx.globalAlpha = dimmed ? 0.15 : 0.94;
+      netCtx.beginPath();
+      netCtx.arc(n.x, n.y, r, 0, Math.PI * 2);
+      netCtx.fillStyle = nodeColor(n.node_id);
+      netCtx.fill();
+      netCtx.lineWidth = 1;
+      netCtx.strokeStyle = isFocused ? "#ffffff" : "rgba(255,255,255,0.65)";
+      netCtx.stroke();
+    });
+
+    netCtx.globalAlpha = 1;
+  }
+
+  function renderNetwork() {
+    renderNetworkCanvas();
+    renderPanel(activeNode());
+  }
+
+  function netPointerToWorld(event) {
+    const [px, py] = d3.pointer(event, netCanvas);
+    return [(px - netZoomTransform.x) / netZoomTransform.k, (py - netZoomTransform.y) / netZoomTransform.k];
+  }
+
+  function netFindNodeAt(wx, wy) {
+    let best = null, bestDist = Infinity;
+    for (const n of nodes) {
+      const dx = n.x - wx, dy = n.y - wy;
+      const dist = dx * dx + dy * dy;
+      const r = netRadiusFor(n.node_id, false) + 3;
+      if (dist < r * r && dist < bestDist) { best = n; bestDist = dist; }
+    }
+    return best;
+  }
+
+  function initNetworkView() {
+    networkInitialized = true;
+    netCanvas = document.getElementById("network");
+    netCtx = netCanvas.getContext("2d");
+    netDPR = Math.min(window.devicePixelRatio || 1, 2);
+
+    const rect = netCanvas.getBoundingClientRect();
+    netW = rect.width;
+    netH = rect.height;
+    netCanvas.width = Math.round(netW * netDPR);
+    netCanvas.height = Math.round(netH * netDPR);
+
+    // Seed starting positions from the map's own projected layout (rescaled
+    // into the canvas's pixel space) rather than a random scatter, so the
+    // force layout starts from something recognizable and settles from
+    // there instead of untangling from scratch.
+    nodes.forEach(n => {
+      const pos = nodeScreenPos(n.node_id) || [totalWidth / 2, height / 2];
+      n.x = (pos[0] / totalWidth) * netW;
+      n.y = (pos[1] / height) * netH;
+    });
+
+    netEdges = edges.map(e => ({ source: e.source, target: e.target }));
+
+    netNeighbors = new Map(nodes.map(n => [n.node_id, { in: new Set(), out: new Set() }]));
+    edges.forEach(e => {
+      netNeighbors.get(e.source).out.add(e.target);
+      netNeighbors.get(e.target).in.add(e.source);
+    });
+
+    const maxTotalDegree = Math.max(...totalDegreeById.values());
+    netRadiusScale = d3.scaleSqrt().domain([0, maxTotalDegree || 1]).range([3, 20]);
+
+    // "Gravitational pull": forceLink pulls connected countries toward each
+    // other, forceManyBody pushes everything apart so it doesn't collapse,
+    // forceCollide keeps circles from overlapping, forceX/Y gently recenters
+    // the whole layout so it doesn't drift off canvas.
+    netSimulation = d3.forceSimulation(nodes)
+      .force("link", d3.forceLink(netEdges).id(d => d.node_id).distance(34).strength(0.12))
+      .force("charge", d3.forceManyBody().strength(-70))
+      .force("collide", d3.forceCollide(d => netRadiusFor(d.node_id, false) + 2))
+      .force("x", d3.forceX(netW / 2).strength(0.025))
+      .force("y", d3.forceY(netH / 2).strength(0.025))
+      .alphaDecay(0.02)
+      .on("tick", requestNetRender);
+
+    const netZoom = d3.zoom()
+      .scaleExtent([0.3, 6])
+      .filter((event) => {
+        if (event.type === "wheel") return true;
+        if (event.button) return false;
+        const [wx, wy] = netPointerToWorld(event);
+        return netFindNodeAt(wx, wy) === null;
+      })
+      .on("zoom", (event) => {
+        netZoomTransform = event.transform;
+        requestNetRender();
+      });
+    d3.select(netCanvas).call(netZoom);
+
+    const netDrag = d3.drag()
+      .subject((event) => {
+        const [wx, wy] = netPointerToWorld(event);
+        return netFindNodeAt(wx, wy);
+      })
+      .on("start", (event) => {
+        if (!event.active) netSimulation.alphaTarget(0.25).restart();
+        event.subject.fx = event.subject.x;
+        event.subject.fy = event.subject.y;
+      })
+      .on("drag", (event) => {
+        const [wx, wy] = netPointerToWorld(event);
+        event.subject.fx = wx;
+        event.subject.fy = wy;
+        requestNetRender();
+      })
+      .on("end", (event) => {
+        if (!event.active) netSimulation.alphaTarget(0);
+        event.subject.fx = null;
+        event.subject.fy = null;
+      });
+    d3.select(netCanvas).call(netDrag);
+
+    netCanvas.addEventListener("mousemove", (event) => {
+      if (pinnedNode) return;
+      const [wx, wy] = netPointerToWorld(event);
+      const hit = netFindNodeAt(wx, wy);
+      const hitId = hit ? hit.node_id : null;
+      if (hitId === hoverNode) return;
+      if (hitId) onHoverEnter(hitId);
+      else onHoverLeave(hoverNode);
+    });
+    netCanvas.addEventListener("mouseleave", () => {
+      if (hoverNode && !pinnedNode) onHoverLeave(hoverNode);
+    });
+    netCanvas.addEventListener("click", (event) => {
+      const [wx, wy] = netPointerToWorld(event);
+      const hit = netFindNodeAt(wx, wy);
+      if (hit) {
+        onClickNode(hit.node_id);
+      } else {
+        pinnedNode = null;
+        hoverNode = null;
+        renderActive();
+      }
+    });
+
+    document.getElementById("zoom-in").addEventListener("click", () => {
+      if (viewMode !== "network") return;
+      d3.select(netCanvas).transition().duration(200).call(netZoom.scaleBy, 1.5);
+    });
+    document.getElementById("zoom-out").addEventListener("click", () => {
+      if (viewMode !== "network") return;
+      d3.select(netCanvas).transition().duration(200).call(netZoom.scaleBy, 1 / 1.5);
+    });
+    document.getElementById("zoom-reset").addEventListener("click", () => {
+      if (viewMode !== "network") return;
+      d3.select(netCanvas).transition().duration(300).call(netZoom.transform, d3.zoomIdentity);
+    });
+
+    window.addEventListener("resize", () => {
+      if (viewMode !== "network" || !networkInitialized) return;
+      const r = netCanvas.getBoundingClientRect();
+      netW = r.width;
+      netH = r.height;
+      netCanvas.width = Math.round(netW * netDPR);
+      netCanvas.height = Math.round(netH * netDPR);
+      netSimulation.force("x", d3.forceX(netW / 2).strength(0.025));
+      netSimulation.force("y", d3.forceY(netH / 2).strength(0.025));
+      requestNetRender();
+    });
+
+    const continentLegend = document.getElementById("continent-legend");
+    continentLegend.innerHTML = Object.entries(CONTINENT_COLORS).map(([name, color]) => `
+      <div class="continent-legend-row"><span class="continent-swatch" style="background:${color}"></span>${name}</div>
+    `).join("");
+
+    document.querySelectorAll('#network-controls .toggle-group button').forEach(btn => {
+      btn.addEventListener("click", (event) => {
+        event.stopPropagation();
+        colorMode = btn.dataset.colorMode;
+        document.querySelectorAll('#network-controls .toggle-group button')
+          .forEach(b => b.classList.toggle("active", b === btn));
+        continentLegend.hidden = colorMode !== "continent";
+        requestNetRender();
+      });
+    });
+
+    requestNetRender();
+  }
+
+  const viewToggleBtn = document.getElementById("view-toggle");
+  const viewToggleLabel = document.getElementById("view-toggle-label");
+
+  viewToggleBtn.addEventListener("click", (event) => {
+    event.stopPropagation();
+    viewMode = viewMode === "map" ? "network" : "map";
+
+    // toggleAttribute (not the .hidden IDL property, which is only defined
+    // on HTMLElement and silently no-ops on the SVG-namespaced #map) works
+    // uniformly across every element here regardless of namespace. This has
+    // to run BEFORE initNetworkView() below -- that measures the canvas's
+    // rendered size via getBoundingClientRect(), which is 0x0 for as long
+    // as it's still sitting behind [hidden].
+    document.getElementById("map").toggleAttribute("hidden", viewMode !== "map");
+    document.getElementById("network").toggleAttribute("hidden", viewMode !== "network");
+    document.getElementById("map-controls").toggleAttribute("hidden", viewMode !== "map");
+    document.getElementById("network-controls").toggleAttribute("hidden", viewMode !== "network");
+    document.getElementById("map-hint").toggleAttribute("hidden", viewMode !== "map");
+    document.getElementById("network-hint").toggleAttribute("hidden", viewMode !== "network");
+
+    if (viewMode === "network" && !networkInitialized) initNetworkView();
+
+    const goingToNetwork = viewMode === "network";
+    viewToggleLabel.textContent = goingToNetwork ? "Map View" : "Network View";
+    viewToggleBtn.title = goingToNetwork
+      ? "Switch back to the map"
+      : "Switch to the interactive network view";
+
+    renderActive();
+  });
 
   render();
 })();
