@@ -8,9 +8,9 @@ stats page in sync.
 Methodology mirrors the course's own week 3 approach (centrality measures,
 undirected-giant-component treatment for path/betweenness/eigenvector,
 harmonic centrality in place of plain closeness for a directed/imperfectly-
-connected graph) -- see https://sunelehmann.com/socialgraphs2026-web/weeks/week3.html
-Deliberately out of scope, per that same methodology: PageRank and degree
-assortativity.
+connected graph, PageRank with alpha=0.85 on the directed graph) -- see
+https://sunelehmann.com/socialgraphs2026-web/weeks/week3.html
+Deliberately out of scope, per that same methodology: degree assortativity.
 
 Usage:
     python3 analyze_network.py
@@ -60,6 +60,14 @@ def top_n_from_dict(d, name_by_id, n=TOP_N, decimals=None):
         entry["value"] = round(value, decimals) if decimals is not None else value
         out.append(entry)
     return out
+
+
+def full_rank(d, name_by_id):
+    """node_id -> 1-based rank (1 = highest value), over the WHOLE dict, not
+    just a top-N slice -- needed to look up a country's rank on a measure
+    even when it doesn't make that measure's own top 15."""
+    ranked = sorted(d.items(), key=lambda kv: (-kv[1], name_by_id[kv[0]]))
+    return {node_id: i + 1 for i, (node_id, _) in enumerate(ranked)}
 
 
 def validate_clique(H, clique):
@@ -198,6 +206,14 @@ def main():
         print("  power iteration did not converge, falling back to eigenvector_centrality_numpy")
         eigenvector = nx.eigenvector_centrality_numpy(Gu_giant)
 
+    # PageRank is inherently a directed-walk measure, so unlike betweenness/
+    # eigenvector above it runs on the directed graph G itself, not the
+    # undirected giant component. alpha=0.85 matches the course's own
+    # convention. Countries with zero out-links (dangling nodes) are handled
+    # correctly by networkx's own redistribution -- nothing extra needed.
+    print("Computing PageRank (directed, alpha=0.85)...")
+    pagerank = nx.pagerank(G, alpha=0.85)
+
     centrality = {
         "in_degree": top_n_from_dict(in_degree, name_by_id),
         "out_degree": top_n_from_dict(out_degree, name_by_id),
@@ -205,6 +221,47 @@ def main():
         "harmonic": top_n_from_dict(harmonic, name_by_id, decimals=2),
         "betweenness": top_n_from_dict(betweenness, name_by_id, decimals=4),
         "eigenvector": top_n_from_dict(eigenvector, name_by_id, decimals=4),
+        "pagerank": top_n_from_dict(pagerank, name_by_id, decimals=4),
+    }
+
+    # PageRank sees WHO links to you, not just how many do -- a country with
+    # modest in-degree but links from important countries can outrank a
+    # country with more raw in-degree but from unimportant ones. Surface any
+    # countries where that actually shows up, using each measure's FULL rank
+    # (not just top-15 membership) so the comparison is meaningful even for
+    # a country just outside one of the two top-15 lists.
+    pagerank_rank = full_rank(pagerank, name_by_id)
+    in_degree_rank = full_rank(in_degree, name_by_id)
+    pagerank_top15_ids = {e["node_id"] for e in centrality["pagerank"]}
+    in_degree_top15_ids = {e["node_id"] for e in centrality["in_degree"]}
+
+    def divergence_entries(ids):
+        entries = []
+        for node_id in ids:
+            entries.append({
+                "node_id": node_id,
+                "name": name_by_id[node_id],
+                "pagerank_rank": pagerank_rank[node_id],
+                "pagerank_value": round(pagerank[node_id], 4),
+                "in_degree_rank": in_degree_rank[node_id],
+                "in_degree_value": in_degree[node_id],
+            })
+        entries.sort(key=lambda e: e["pagerank_rank"])
+        return entries
+
+    in_pagerank_not_in_degree = divergence_entries(pagerank_top15_ids - in_degree_top15_ids)
+    in_degree_not_in_pagerank = divergence_entries(in_degree_top15_ids - pagerank_top15_ids)
+
+    print(f"PageRank top 15 vs in-degree top 15: "
+          f"{len(in_pagerank_not_in_degree)} in PageRank only, "
+          f"{len(in_degree_not_in_pagerank)} in in-degree only")
+    for e in in_pagerank_not_in_degree:
+        print(f"  {e['name']}: PageRank rank {e['pagerank_rank']}, "
+              f"in-degree rank {e['in_degree_rank']} (in-degree {e['in_degree_value']})")
+
+    centrality["pagerank_vs_in_degree"] = {
+        "in_pagerank_not_in_degree": in_pagerank_not_in_degree,
+        "in_degree_not_in_pagerank": in_degree_not_in_pagerank,
     }
 
     # ----------------------------------------------------------- cliques --

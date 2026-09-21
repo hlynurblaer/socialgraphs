@@ -169,6 +169,17 @@
     margin: 0 0 12px;
   }
 
+  .divergence-note {
+    font-size: 11.5px;
+    color: var(--text-body);
+    line-height: 1.55;
+    background: var(--un-gold-dim);
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin: 12px 0 0;
+  }
+  .divergence-note strong { color: var(--un-navy); }
+
   table.rank-table {
     width: 100%;
     border-collapse: collapse;
@@ -415,7 +426,7 @@
   // ---------------------------------------------------------- centrality --
   const centralityGrid = document.getElementById("centrality-grid");
 
-  function leaderboardCard(title, gloss, items, formatValue) {
+  function leaderboardCard(title, gloss, items, formatValue, extraHtml) {
     const card = document.createElement("div");
     card.className = "card";
     const rows = items.map((item, i) => `
@@ -429,6 +440,7 @@
       <h3>${title}</h3>
       <p class="gloss">${gloss}</p>
       <table class="rank-table"><tbody>${rows}</tbody></table>
+      ${extraHtml || ""}
     `;
     return card;
   }
@@ -436,6 +448,28 @@
   const c = stats.centrality;
   const intFmt = (v) => v;
   const decFmt = (v) => v.toFixed(v < 1 ? 4 : 2);
+
+  // Reuses the in-degree list already on the page rather than duplicating
+  // it -- just points out where the two rankings actually disagree.
+  function pagerankDivergenceNote(divergence) {
+    const lines = [];
+    divergence.in_pagerank_not_in_degree.forEach(e => {
+      lines.push(
+        `<strong>${e.name}</strong> ranks #${e.pagerank_rank} by PageRank but only ` +
+        `#${e.in_degree_rank} by raw in-degree (${e.in_degree_value} links in) &mdash; its incoming ` +
+        `links skew toward more important countries.`
+      );
+    });
+    divergence.in_degree_not_in_pagerank.forEach(e => {
+      lines.push(
+        `<strong>${e.name}</strong> ranks #${e.in_degree_rank} by raw in-degree ` +
+        `(${e.in_degree_value} links in) but only #${e.pagerank_rank} by PageRank &mdash; its incoming ` +
+        `links skew toward less important countries.`
+      );
+    });
+    if (!lines.length) return "";
+    return `<p class="divergence-note">${lines.join(" ")}</p>`;
+  }
 
   centralityGrid.append(
     leaderboardCard(
@@ -476,6 +510,15 @@
       "(the directed version can silently zero out everything upstream of the dominant strongly " +
       "connected component).",
       c.eigenvector, decFmt
+    ),
+    leaderboardCard(
+      "PageRank",
+      "Who is linked to BY THE IMPORTANT, not just linked to a lot &mdash; a link from a high-PageRank " +
+      "country counts for more than one from an obscure country. Computed on the directed graph " +
+      "(alpha&nbsp;=&nbsp;0.85); countries with no outgoing links are handled correctly by networkx's " +
+      "own dangling-node redistribution.",
+      c.pagerank, decFmt,
+      pagerankDivergenceNote(c.pagerank_vs_in_degree)
     )
   );
 

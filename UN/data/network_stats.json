@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-21T16:56:41+00:00",
+  "generated_at": "2026-09-21T18:49:21+00:00",
   "overview": {
     "n_nodes": 193,
     "n_edges": 2199,
@@ -318,13 +318,13 @@
         "value": 98.5
       },
       {
-        "node_id": "Iran",
-        "name": "Iran",
+        "node_id": "Iraq",
+        "name": "Iraq",
         "value": 97.5
       },
       {
-        "node_id": "Iraq",
-        "name": "Iraq",
+        "node_id": "Iran",
+        "name": "Iran",
         "value": 97.5
       },
       {
@@ -491,40 +491,112 @@
         "name": "Philippines",
         "value": 0.1145
       }
-    ]
+    ],
+    "pagerank": [
+      {
+        "node_id": "United_States",
+        "name": "United States",
+        "value": 0.0305
+      },
+      {
+        "node_id": "China",
+        "name": "China",
+        "value": 0.0278
+      },
+      {
+        "node_id": "United_Kingdom",
+        "name": "United Kingdom",
+        "value": 0.0236
+      },
+      {
+        "node_id": "Russia",
+        "name": "Russia",
+        "value": 0.0193
+      },
+      {
+        "node_id": "Philippines",
+        "name": "Philippines",
+        "value": 0.0158
+      },
+      {
+        "node_id": "India",
+        "name": "India",
+        "value": 0.0153
+      },
+      {
+        "node_id": "Turkey",
+        "name": "Turkey",
+        "value": 0.0139
+      },
+      {
+        "node_id": "France",
+        "name": "France",
+        "value": 0.0135
+      },
+      {
+        "node_id": "Spain",
+        "name": "Spain",
+        "value": 0.0126
+      },
+      {
+        "node_id": "Germany",
+        "name": "Germany",
+        "value": 0.0117
+      },
+      {
+        "node_id": "Italy",
+        "name": "Italy",
+        "value": 0.0114
+      },
+      {
+        "node_id": "Iran",
+        "name": "Iran",
+        "value": 0.0113
+      },
+      {
+        "node_id": "Iraq",
+        "name": "Iraq",
+        "value": 0.0108
+      },
+      {
+        "node_id": "Australia",
+        "name": "Australia",
+        "value": 0.0107
+      },
+      {
+        "node_id": "Saudi_Arabia",
+        "name": "Saudi Arabia",
+        "value": 0.0094
+      }
+    ],
+    "pagerank_vs_in_degree": {
+      "in_pagerank_not_in_degree": [
+        {
+          "node_id": "Italy",
+          "name": "Italy",
+          "pagerank_rank": 11,
+          "pagerank_value": 0.0114,
+          "in_degree_rank": 18,
+          "in_degree_value": 22
+        }
+      ],
+      "in_degree_not_in_pagerank": [
+        {
+          "node_id": "Egypt",
+          "name": "Egypt",
+          "pagerank_rank": 16,
+          "pagerank_value": 0.0091,
+          "in_degree_rank": 11,
+          "in_degree_value": 25
+        }
+      ]
+    }
   },
   "cliques": {
     "all_links": {
       "clique_number": 7,
       "n_max_cliques": 5,
       "examples": [
-        [
-          "Fiji",
-          "Kiribati",
-          "Solomon Islands",
-          "Tonga",
-          "Tuvalu",
-          "United Kingdom",
-          "Vanuatu"
-        ],
-        [
-          "Fiji",
-          "Kiribati",
-          "New Zealand",
-          "Solomon Islands",
-          "Tonga",
-          "Tuvalu",
-          "United Kingdom"
-        ],
-        [
-          "Australia",
-          "Fiji",
-          "Kiribati",
-          "New Zealand",
-          "Solomon Islands",
-          "Tuvalu",
-          "United Kingdom"
-        ],
         [
           "Egypt",
           "Iraq",
@@ -542,6 +614,33 @@
           "Saudi Arabia",
           "Sudan",
           "United Arab Emirates"
+        ],
+        [
+          "Fiji",
+          "Kiribati",
+          "Solomon Islands",
+          "Tonga",
+          "Tuvalu",
+          "United Kingdom",
+          "Vanuatu"
+        ],
+        [
+          "Australia",
+          "Fiji",
+          "Kiribati",
+          "New Zealand",
+          "Solomon Islands",
+          "Tuvalu",
+          "United Kingdom"
+        ],
+        [
+          "Fiji",
+          "Kiribati",
+          "New Zealand",
+          "Solomon Islands",
+          "Tonga",
+          "Tuvalu",
+          "United Kingdom"
         ]
       ],
       "n_examples_shown": 5
