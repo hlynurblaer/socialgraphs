@@ -783,6 +783,27 @@
 
   mapSvg.call(zoom);
 
+  // The side panel is opaque and covers a strip of the map on the right
+  // while open. Rather than just letting content sit permanently hidden
+  // under it, widen the pannable area by the panel's own width (converted
+  // from its rendered CSS px into the map's world-unit coordinate space)
+  // so the user can drag that strip out from under the panel. Reverts to
+  // the normal extent once the panel closes.
+  function updatePanExtent(panelOpen) {
+    const svgRect = mapSvg.node().getBoundingClientRect();
+    const cssPerWorldUnit = svgRect.width / width;
+    let extra = 0;
+    if (panelOpen && cssPerWorldUnit > 0) {
+      const panelWidth = document.getElementById("side-panel").getBoundingClientRect().width;
+      extra = panelWidth / cssPerWorldUnit;
+    }
+    zoom.translateExtent([[0, 0], [width + extra, height]]);
+  }
+
+  window.addEventListener("resize", () => {
+    updatePanExtent(document.getElementById("side-panel").classList.contains("open"));
+  });
+
   document.getElementById("zoom-in").addEventListener("click", (event) => {
     event.stopPropagation();
     mapSvg.transition().duration(200).call(zoom.scaleBy, 1.6);
@@ -911,9 +932,11 @@
 
     if (!active) {
       panel.classList.remove("open");
+      updatePanExtent(false);
       return;
     }
     panel.classList.add("open");
+    updatePanExtent(true);
 
     const n = nodesById.get(active);
     const outD = outDegree.get(active) || 0;
