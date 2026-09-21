@@ -2,7 +2,7 @@
 # Directed, unweighted: edge A -> B when A's article wikitext links to B's,
 # counting only inline links from the article's OWN prose/infobox -- links
 # injected by shared navigation templates (e.g. the UN navbox) are excluded.
-# 193 nodes, 2199 directed edges.
+# 193 nodes, 2220 directed edges.
 # Manual addition (2026-09-21): Kenya -> {Ethiopia, Somalia, South_Sudan,
 # Sudan, Tanzania, Uganda}. Kenya's intro sentence names all six as
 # neighbors/border context in plain prose ("Kenya is bordered by South
@@ -12,6 +12,31 @@
 # for Kenya even though the source article clearly discusses all six.
 # Added by hand rather than relaxing the extraction rule, which would
 # require guessing at unlinked plain-text mentions article-wide.
+#
+# Manual addition (2026-09-22): Portugal -> {Brazil, Germany, Spain,
+# United_Kingdom} and Luxembourg -> {Afghanistan, Albania, Austria,
+# Belgium, Bosnia_and_Herzegovina, France, Germany, Italy, Japan,
+# Montenegro, Netherlands, Portugal, Serbia, Spain, Switzerland,
+# United_Kingdom, United_States}. Both articles had out-degree 0 for the
+# same reason as Kenya: every country they mention -- bordering nations,
+# colonial history, wars and treaties, trade partners, immigrant-origin
+# countries -- is named in plain prose, never wikilinked. Found by
+# scanning both articles' full wikitext (stripping <ref> citations,
+# {{cite}}/{{sfnp}} templates, infobox flag-icon statistics tables, and
+# image captions first, since a naive plain-text scan is mostly citation
+# metadata and bibliography noise at this article length) for country
+# names appearing outside [[double brackets]], then manually reviewing
+# every hit for genuine substantive content. Included: bordering
+# countries, named wars/treaties/historical rule, specific trade or
+# demographic percentages, small named rankings (e.g. "second-largest
+# investment fund centre, after the United States"). Excluded as
+# incidental: open-ended comparison lists ("surpassed by the United
+# States, Canada, Australia, ... and other small states like ...", which
+# is what silently pulled in Australia/Canada/New_Zealand/Iceland/
+# Monaco/San_Marino/Liechtenstein/Brunei on a first, less careful pass)
+# and event-location mentions (Luxembourg exhibiting at an Expo "in
+# Shanghai, China" is not a Luxembourg-China relationship; a photo
+# caption naming "Helsinki, Finland" is not a Portugal-Finland one).
 # source	target
 Afghanistan	Bolivia
 Afghanistan	Cambodia
@@ -1043,6 +1068,23 @@ Lithuania	Sweden
 Lithuania	Ukraine
 Lithuania	United_Kingdom
 Lithuania	United_States
+Luxembourg	Afghanistan
+Luxembourg	Albania
+Luxembourg	Austria
+Luxembourg	Belgium
+Luxembourg	Bosnia_and_Herzegovina
+Luxembourg	France
+Luxembourg	Germany
+Luxembourg	Italy
+Luxembourg	Japan
+Luxembourg	Montenegro
+Luxembourg	Netherlands
+Luxembourg	Portugal
+Luxembourg	Serbia
+Luxembourg	Spain
+Luxembourg	Switzerland
+Luxembourg	United_Kingdom
+Luxembourg	United_States
 Madagascar	Algeria
 Madagascar	Comoros
 Madagascar	Indonesia
@@ -1456,6 +1498,10 @@ Poland	Russia
 Poland	Slovakia
 Poland	Ukraine
 Poland	United_States
+Portugal	Brazil
+Portugal	Germany
+Portugal	Spain
+Portugal	United_Kingdom
 Qatar	Afghanistan
 Qatar	Bahrain
 Qatar	China
