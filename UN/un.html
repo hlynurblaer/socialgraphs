@@ -282,8 +282,19 @@
     padding: 20px;
     overflow-y: auto;
     border-left: 3px solid var(--un-blue);
+    /* Countries near the right edge of the map sit under where this panel
+       slides in. Without this, sliding the (opaque) panel over the cursor
+       covers the marker being hovered, the browser fires mouseleave on it,
+       hoverNode clears, the panel closes, the marker is uncovered again,
+       mouseenter fires again -- an open/close flicker loop. Making the
+       panel itself transparent to pointer events (and re-enabling just its
+       two real controls below) means hover/click always resolves against
+       the map underneath, so that loop can't start. */
+    pointer-events: none;
   }
   #side-panel.open { transform: translateX(0); }
+
+  .panel-close, .wiki-link { pointer-events: auto; }
 
   .panel-close {
     position: absolute;
